@@ -7,10 +7,6 @@ from flask.ext.sqlalchemy import SQLAlchemy
 db = SQLAlchemy()
 
 
-def db_init(app):
-    db.init_app(app)
-
-
 class Sexe(Enum):
     M = 1
     F = 2
