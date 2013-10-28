@@ -7,6 +7,8 @@ import yaml
 from flask import Flask
 
 from models import db
+import views
+import login
 
 CONFIG_FILE = 'config.yaml'
 
@@ -21,6 +23,10 @@ def create_app():
     app.config.update(config)
 
     db.init_app(app)
+    login.login_manager.init_app(app)
+
+    app.register_blueprint(views.bp)
+
     return app
 
 
