@@ -47,12 +47,22 @@ class User(db.Model):
         self.portable = portable
 
     def __repr__(self):
-        return "<{} {}>".format(self.__class__.__name__, self.email)
+        return "{}(id={}, email={})".format(self.__class__.__name__, self.id, self.email)
+
+    def __str__(self):
+        return self.email
+
+    @property
+    def role(self):
+        return self.volontaire or self.responsable or self.brn
+
+    def is_volontaire(self):
+        return type(self.role) is Volontaire
 
 
 class Volontaire(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-    user = db.relationship('User', backref=db.backref('volontaire'), uselist=False)
+    user = db.relationship('User', backref=db.backref('volontaire', uselist=False))
 
     id = db.Column(db.Integer, primary_key=True)
     sweat = db.Column(db.Integer)
@@ -60,6 +70,12 @@ class Volontaire(db.Model):
     def __init__(self, user, sweat=None):
         self.user = user
         self.sweat = sweat
+
+    def __repr__(self):
+        return "{}(user_id={})".format(self.__class__.__name__, self.user_id)
+
+    def __str__(self):
+        return "{} {}".format(self.__class__.__name__, self.user)
 
 
 class Disponibilites(db.Model):
@@ -72,20 +88,39 @@ class Disponibilites(db.Model):
         self.volontaire = volontaire
         self.quand = quand
 
+    def __repr__(self):
+        return "{}(volontaire_id={}, quand={})" \
+                .format(self.__class__.__name__, self.volontaire_id, self.quand)
+
+    def __str__(self):
+        return "{} dispo le {}".format(self.volontaire.user.email, self.quand)
+
 
 class Responsable(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-    user = db.relationship('User', backref=db.backref('responsable'), uselist=False)
+    user = db.relationship('User', backref=db.backref('responsable', uselist=False))
 
     def __init__(self, user):
         self.user = user
+
+    def __repr__(self):
+        return "{}(user_id={})".format(self.__class__.__name__, self.user_id)
+
+    def __str__(self):
+        return "{} {}".format(self.__class__.__name__, self.user)
 
 
 class BRN(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-    user = db.relationship('User', backref=db.backref('brn'), uselist=False)
+    user = db.relationship('User', backref=db.backref('brn', uselist=False))
 
     def __init__(self, user):
         self.user = user
+
+    def __repr__(self):
+        return "{}(user_id={})".format(self.__class__.__name__, self.user_id)
+
+    def __str__(self):
+        return "{} {}".format(self.__class__.__name__, self.user)
