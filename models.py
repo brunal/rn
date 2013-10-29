@@ -1,3 +1,4 @@
+# -*- encoding: utf-8 -*-
 """
 Models and database options
 """
@@ -26,6 +27,16 @@ class Disponibilite(Enum):
     VM = 2
     VA = 3
     LM = 4
+
+    def __str__(self):
+        if self is Disponibilite.JA:
+            return u"jeudi après-midi"
+        elif self is Disponibilite.VM:
+            return u"vendredi matin"
+        elif self is Disponibilite.VA:
+            return u"vendredi après-midi"
+        elif self is Disponibilite.LM:
+            return u"lundi matin"
 
 
 class User(db.Model):

@@ -1,4 +1,10 @@
+{% from "_formhelpers.html" import render_simple_form %}
+{% extends "base.html" %}
 {% block body %}
-{{ user.name }}
-{{ user.email }}
+<p>Bonjour {{ user.name }}. Ton adresse email est {{ user.email }}, tu étudies à {{ user.ecole }} et ton numéro de contact est {{ user.portable }}.</p>
+
+    {% if message %}
+      <p>{{ message }}</p>
+    {% endif %}
+    {{ render_simple_form(form) }}
 {% endblock %}

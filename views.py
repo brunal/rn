@@ -1,3 +1,4 @@
+# -*- encoding: utf-8 -*-
 """
 Views: from the URL to the rendered template
 """
@@ -60,7 +61,29 @@ def register():
     return render_template('register.html', form=form)
 
 
-@bp.route('/profil')
+@bp.route('/profil', methods=['GET', 'POST'])
 @login_required
 def profil():
-    return render_template('profil.html', user=current_user.user)
+    # Du travail supplémentaire est requis au niveau des disponibilites pour
+    # les faire marcher en many-to-many correctement (dommage)
+    volontaire = current_user.user.role
+    if request.method == 'POST':
+        form = forms.Profil(request.form)
+        if form.validate():
+            # update user object
+            volontaire.sweat = form.sweat.data
+
+            map(models.db.session.delete, volontaire.disponibilites)
+            dispos = []
+            for i in form.disponibilites.data:
+                dispo = models.Disponibilites(volontaire=volontaire, quand=i)
+                models.db.session.add(dispo)
+                dispos.append(dispo)
+            volontaire.disponibilites = dispos
+
+            models.db.session.commit()
+    else:
+        dispos_int = [d.quand for d in volontaire.disponibilites]
+        form = forms.Profil(sweat=volontaire.sweat, disponibilites=dispos_int)
+
+    return render_template('profil.html', form=form, user=current_user.user)
