@@ -67,9 +67,6 @@ class User(db.Model):
     def role(self):
         return self.volontaire or self.responsable or self.brn
 
-    def is_volontaire(self):
-        return type(self.role) is Volontaire
-
 
 class Volontaire(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))

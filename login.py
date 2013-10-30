@@ -2,9 +2,11 @@
 Tools related to user authentication & login
 """
 from hashlib import sha1
+from functools import wraps
 import logging
 
-from flask.ext.login import LoginManager, UserMixin
+from flask import abort
+from flask.ext.login import LoginManager, UserMixin, current_user
 
 import models
 
@@ -49,3 +51,19 @@ def authentify(email, password):
 def load_user(id):
     logging.debug("Trying to log user with id %s", id)
     return User.get(id)
+
+
+def get_current_user_role():
+    return type(current_user.user.role)
+
+
+def requires_roles(*roles):
+    """Authorization decorator"""
+    def wrapper(f):
+        @wraps(f)
+        def wrapped(*args, **kwargs):
+            if get_current_user_role() not in roles:
+                abort(401)
+            return f(*args, **kwargs)
+        return wrapped
+    return wrapper

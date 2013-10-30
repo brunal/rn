@@ -72,6 +72,10 @@ def register():
 @bp.route('/profil', methods=['GET', 'POST'])
 @login_required
 def profil():
+    if login.get_current_user_role() is not models.Volontaire:
+        # on affiche juste les informations
+        return render_template('profil.html', user=current_user.user)
+
     # Du travail supplémentaire est requis au niveau des disponibilites pour
     # les faire marcher en many-to-many correctement (dommage)
     volontaire = current_user.user.role
@@ -90,8 +94,14 @@ def profil():
             volontaire.disponibilites = dispos
 
             models.db.session.commit()
+
+            message = "Infos bien mises à jour !"
     else:
         dispos_int = [d.quand for d in volontaire.disponibilites]
         form = forms.Profil(sweat=volontaire.sweat, disponibilites=dispos_int)
+        message = None
 
-    return render_template('profil.html', form=form, user=current_user.user)
+    return render_template('profil.html',
+                           form=form,
+                           user=current_user.user,
+                           message=message)
