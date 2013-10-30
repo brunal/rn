@@ -25,7 +25,7 @@ def create_app():
     db.init_app(app)
     login.login_manager.init_app(app)
 
-    app.register_blueprint(views.bp)
+    app.register_blueprint(views.bp_basic)
 
     return app
 
