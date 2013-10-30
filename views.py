@@ -10,6 +10,9 @@ import models
 import login
 
 
+login.login_manager.login_view = '.login_page'
+
+
 bp = Blueprint(__name__, __name__)
 
 
@@ -22,7 +25,7 @@ def login_page():
         user = login.authentify(email, password)
         if user:
             login_user(user)
-            return redirect(url_for('.profil'))
+            return redirect(request.args.get('next') or url_for('.profil'))
 
         return render_template('login.html', form=form, message='Email ou mot de passe invalide')
 

@@ -15,7 +15,12 @@ def mk_req(nom):
 class Registration(Form):
 
     email = TextField('email', validators=mk_req('email'))
-    password = PasswordField('mdp', validators=mk_req('mot de passe'))
+    password = PasswordField('mot de passe',
+                             validators=[validators.Required(message=u'Mot de passe obligatoire'),
+                                         validators.Length(min=5, message=u'Minimum %(min)d caractères')])
+    password2 = PasswordField(u'répéter le mot de passe',
+                              validators=[validators.EqualTo(fieldname='password',
+                                                             message=u'Les deux mots de passe doivent être égaux')])
     name = TextField('nom', validators=mk_req('nom'))
     sexe = RadioField('sexe',
                       choices=[(s.value, s.name) for s in Sexe],
