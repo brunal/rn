@@ -39,6 +39,9 @@ class Disponibilite(Enum):
             return u"lundi matin"
 
 
+# Profils utilisateurs
+
+
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String)
@@ -132,3 +135,18 @@ class BRN(db.Model):
 
     def __str__(self):
         return "{} {}".format(self.__class__.__name__, self.user)
+
+
+# Activités
+
+class Activite(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    responsable_id = db.Column(db.Integer, db.ForeignKey('responsable.id'))
+    responsable = db.relationship('Responsable', backref=db.backref('activite', uselist=False))
+
+    debut = db.Column(db.DateTime)
+    fin = db.Column(db.DateTime)
+    nom = db.Column(db.String)
+    description = db.Column(db.Text)
+    lieu = db.Column(db.String)
+    sexe = db.Column(db.Integer)

@@ -26,6 +26,7 @@ def create_app():
     login.login_manager.init_app(app)
 
     app.register_blueprint(views.bp_basic)
+    app.register_blueprint(views.bp_responsable)
 
     return app
 

@@ -2,37 +2,43 @@
 """
 All forms are defined here
 """
+from datetime import datetime, date
+
 from flask.ext.wtf import Form
-from wtforms import TextField, PasswordField, RadioField, validators, SelectMultipleField, widgets
+from wtforms import StringField, PasswordField, RadioField, DateTimeField, \
+                    SelectMultipleField, SelectField, TextAreaField, \
+                    validators, widgets
 
 from models import Sexe, Sweat, Disponibilite
 
 
 def mk_req(nom):
-    return [validators.Required(message=u'{} obligatoire'.format(nom))]
+    return [validators.DataRequired(message=u'{} obligatoire'.format(nom))]
 
+
+# Utilisateurs
 
 class Registration(Form):
 
-    email = TextField('email', validators=mk_req('email'))
+    email = StringField('email', validators=mk_req('email'))
     password = PasswordField('mot de passe',
                              validators=[validators.Required(message=u'Mot de passe obligatoire'),
                                          validators.Length(min=5, message=u'Minimum %(min)d caractères')])
     password2 = PasswordField(u'répéter le mot de passe',
                               validators=[validators.EqualTo(fieldname='password',
                                                              message=u'Les deux mots de passe doivent être égaux')])
-    name = TextField('nom', validators=mk_req('nom'))
+    name = StringField('nom', validators=mk_req('nom'))
     sexe = RadioField('sexe',
                       choices=[(s.value, s.name) for s in Sexe],
                       coerce=int,
                       validators=mk_req('sexe'))
-    ecole = TextField(u'école', validators=mk_req(u'école'))
-    portable = TextField('portable', validators=mk_req('portable'))
+    ecole = StringField(u'école', validators=mk_req(u'école'))
+    portable = StringField('portable', validators=mk_req('portable'))
 
 
 class Login(Form):
-    email = TextField('email', validators=[validators.Required(message='email obligatoire')])
-    password = PasswordField('mdp', validators=[validators.Required(message='mdp obligatoire')])
+    email = StringField('email', validators=mk_req('email obligatoire'))
+    password = PasswordField('mdp', validators=mk_req('mdp obligatoire'))
 
 
 class MultiCheckboxField(SelectMultipleField):
@@ -48,3 +54,26 @@ class Profil(Form):
     disponibilites = MultiCheckboxField('disponibilites',
                       choices=[(s.value, s) for s in Disponibilite],
                       coerce=int)
+
+
+# Activités
+
+# début de la RN
+JEUDI = date(2014, 2, 1)
+
+
+class Activite(Form):
+    jour = SelectField('jour', coerce=int,
+                       choices=[(0, 'jeudi'), (1, 'vendredi'),
+                                (2, 'samedi'), (3, 'dimanche'), (4, 'lundi')])
+    debut = DateTimeField(u'heure de début (HH:MM)', validators=mk_req(u'début'),
+                          format='%H:%M', filters=(datetime.time,))
+    fin = DateTimeField('heure de fin (HH:MM)', validators=mk_req(u'fin'),
+                        format='%H:%M', filters=(datetime.time,))
+
+    nom = StringField(u'nom de l\'activité', validators=mk_req('nom'))
+    description = TextAreaField(u'description de l\'activité', validators=mk_req('description'))
+    lieu = StringField('lieu', validators=mk_req('lieu'))
+    sexe = RadioField(u'préférence quant au sexe des volontaires',
+                     choices=[(s.value, s.name) for s in Sexe] + [(0, "aucune")],
+                     coerce=int)
