@@ -29,7 +29,7 @@ def activite_get():
     else:
         form = forms.Activite()
 
-    return render_template('activite.html', form=form,
+    return render_template('config_activite.html', form=form,
                            files=upload.list_files(current_user.user.email),
                            extensions=upload.config.ALLOWED_EXTENSIONS)
 
@@ -59,7 +59,7 @@ def activite_post():
 
         redirect(url_for('.activite_get'))
 
-    return render_template('activite.html', form=form,
+    return render_template('config_activite.html', form=form,
                            files=upload.list_files(current_user.user.email),
                            extensions=upload.config.ALLOWED_EXTENSIONS)
 

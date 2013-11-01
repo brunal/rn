@@ -1,29 +1,32 @@
 {% from "_formhelpers.html" import render_simple_form %}
 {% extends "base.html" %}
 {% block body %}
-    {% if form %}
-        {{ render_simple_form(form) }}
+<h2>{{ activite.nom }}</h2>
+<dl>
+    <dt>Jour</dt> <dd>{{ activite.debut.date() }}</dd>
+    <dt>Début</dt> <dd>{{ activite.debut.time() }}</dd>
+    <dt>Fin</dt> <dd>{{ activite.fin.time() }}</dd>
+    <dt>Nombre de volontaires demandé</dt> <dd> {{ activite.nombre_volontaires }}</dd>
+    {% if activite.sexe %}
+    <dt>Préférence de sexe des volontaires</dt> <dd>{{ activite.sexe }}</dd>
     {% endif %}
+    <dt>Responsable</dt>
+    <dd><a href="mailto:{{ activite.responsable.email }}">
+        {{ activite.responsable.nom }}
+    </a></dd>
+</dl>
 
-    <div>
-        <p>Vous pouvez mettre en ligne des documents liés à votre activité. Les extensions autorisées sont
-       {% for ext in extensions %}
-       {{ ext }}{% if not loop.last %}, {% endif %}
-       {% endfor %}. Il n'y a pas actuellemnt de quota de taille par activité, merci de ne pas abuser.</p>
-       <form action="{{ url_for('views.responsable.upload_page') }}" method="POST" enctype="multipart/form-data">
-            <p><input type="file" name="files" multiple/>
-               <input type="submit"/></p>
-        </form>
-    </div>
-    <div>Fichiers téléversés :
-        <ul>
-            {% for filename in files %}
-            <li><a href="{{ url_for('views.activite.get_asset',
-                                    activite_id=current_user.user.role.activite.id,
-                                    filename=filename) }}">{{ filename }}</a>
-                <a href="{{ url_for('views.responsable.delete_asset',
-                                    filename=filename) }}">supprimer</a>
-            </li>
-            {% endfor %}
-        </ul>
+<p>{{ activite.description }}</p>
+
+{% if ressources %}
+Des ressources sont disponibles pour cette activité :
+<ul>
+    {% for r in ressources %}
+    <li><a href="{{ url_for('views.activite.get_asset',
+                            activite_id=activite.id,
+                            filename=r) }}">{{ r }}</a></li>
+    {% endfor %}
+</ul>
+{% endif %}
+
 {% endblock %}
