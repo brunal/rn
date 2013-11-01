@@ -150,3 +150,4 @@ class Activite(db.Model):
     description = db.Column(db.Text)
     lieu = db.Column(db.String)
     sexe = db.Column(db.Integer)
+    nombre_volontaires = db.Column(db.Integer)

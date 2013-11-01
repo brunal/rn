@@ -26,7 +26,7 @@ def list_activites():
 @login_required
 def activite(activite_id):
     activite = models.Activite.query.get(activite_id) or abort(404)
-    ressources = upload.list_files(activite.responsable.user.email)
+    ressources = upload.list_files(activite.id)
     return render_template('activite.html', activite=activite, ressources=ressources)
 
 
@@ -34,5 +34,5 @@ def activite(activite_id):
 @login_required
 def get_asset(activite_id, filename):
     activite = models.Activite.query.get(activite_id) or abort(404)
-    folder = upload.get_folder(activite.responsable.user.email)
+    folder = upload.get_folder(activite.id)
     return send_from_directory(folder, secure_filename(filename))

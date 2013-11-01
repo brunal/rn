@@ -20,7 +20,7 @@ def allowed_file(filename):
 
 
 def get_folder(owner_id):
-    folder = secure_filename(owner_id)
+    folder = secure_filename(str(owner_id))
     folder = path.join(config.UPLOAD_FOLDER, folder)
     if not path.exists(folder):
         makedirs(folder)

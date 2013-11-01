@@ -26,12 +26,13 @@ def activite_get():
     if activite:
         form = forms.Activite(obj=activite)
         form.jour.data = (activite.debut.date() - forms.JEUDI).days
+        return render_template('config_activite.html', form=form,
+                               files=upload.list_files(activite.id),
+                               extensions=upload.config.ALLOWED_EXTENSIONS)
     else:
         form = forms.Activite()
-
-    return render_template('config_activite.html', form=form,
-                           files=upload.list_files(current_user.user.email),
-                           extensions=upload.config.ALLOWED_EXTENSIONS)
+        # on ne propose pas le téléversement si l'activité n'a pas été créée
+        return render_template('config_activite.html', form=form)
 
 
 @bp.route('/responsable', methods=['POST'])
@@ -60,7 +61,7 @@ def activite_post():
         redirect(url_for('.activite_get'))
 
     return render_template('config_activite.html', form=form,
-                           files=upload.list_files(current_user.user.email),
+                           files=upload.list_files(activite.id),
                            extensions=upload.config.ALLOWED_EXTENSIONS)
 
 
@@ -69,7 +70,7 @@ def activite_post():
 @requires_roles(models.Responsable)
 def upload_page():
     files = request.files.getlist('files')
-    successes, failures = upload.upload_files(current_user.user.email, files)
+    successes, failures = upload.upload_files(current_user.user.role.activite.id, files)
     if successes:
         flash(u'Succès : {}'.format(', '.join(successes)))
     if failures:
@@ -81,7 +82,7 @@ def upload_page():
 @login_required
 @requires_roles(models.Responsable)
 def delete_asset(filename):
-    result = upload.delete_file(current_user.user.email, filename)
+    result = upload.delete_file(current_user.user.role.activite.id, filename)
     if result is True:
         flash(u'{} a bien été supprimé'.format(filename))
     else:

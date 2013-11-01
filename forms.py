@@ -7,7 +7,7 @@ from datetime import datetime, date
 from flask.ext.wtf import Form
 from wtforms import StringField, PasswordField, RadioField, DateTimeField, \
                     SelectMultipleField, SelectField, TextAreaField, \
-                    validators, widgets
+                    IntegerField, validators, widgets
 
 from models import Sexe, Sweat, Disponibilite
 
@@ -37,8 +37,8 @@ class Registration(Form):
 
 
 class Login(Form):
-    email = StringField('email', validators=mk_req('email obligatoire'))
-    password = PasswordField('mdp', validators=mk_req('mdp obligatoire'))
+    email = StringField('email', validators=mk_req('email'))
+    password = PasswordField('mdp', validators=mk_req('mdp'))
 
 
 class MultiCheckboxField(SelectMultipleField):
@@ -62,18 +62,25 @@ class Profil(Form):
 JEUDI = date(2014, 2, 1)
 
 
+def time_or_none(t):
+    if t is None:
+        return None
+    return t.time()
+
+
 class Activite(Form):
     jour = SelectField('jour', coerce=int,
                        choices=[(0, 'jeudi'), (1, 'vendredi'),
                                 (2, 'samedi'), (3, 'dimanche'), (4, 'lundi')])
     debut = DateTimeField(u'heure de début (HH:MM)', validators=mk_req(u'début'),
-                          format='%H:%M', filters=(datetime.time,))
+                          format='%H:%M', filters=(time_or_none,))
     fin = DateTimeField('heure de fin (HH:MM)', validators=mk_req(u'fin'),
-                        format='%H:%M', filters=(datetime.time,))
+                        format='%H:%M', filters=(time_or_none,))
 
     nom = StringField(u'nom de l\'activité', validators=mk_req('nom'))
     description = TextAreaField(u'description de l\'activité', validators=mk_req('description'))
     lieu = StringField('lieu', validators=mk_req('lieu'))
+    nombre_volontaires = IntegerField(u'nombre de volontaires demandé')
     sexe = RadioField(u'préférence quant au sexe des volontaires',
                      choices=[(s.value, s.name) for s in Sexe] + [(0, "aucune")],
                      coerce=int)
