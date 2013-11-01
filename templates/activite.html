@@ -1,9 +1,6 @@
 {% from "_formhelpers.html" import render_simple_form %}
 {% extends "base.html" %}
 {% block body %}
-    {% if message %}
-      <p>{{ message }}</p>
-    {% endif %}
     {% if form %}
         {{ render_simple_form(form) }}
     {% endif %}

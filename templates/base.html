@@ -28,6 +28,24 @@
 </nav>
 {% endblock menu %}
 
+
+{% block messages %}
+{% with messages = get_flashed_messages() %}
+  {% if messages or message %}
+    <ul class="flashes">
+    {% if message %}
+      <li>{{ message }}</li>
+    {% endif %}
+
+    {% for message in messages %}
+      <li>{{ message }}</li>
+    {% endfor %}
+    </ul>
+  {% endif %}
+{% endwith %}
+{% endblock %}
+
+
 {% block body %}
 {% endblock %}
 </body>

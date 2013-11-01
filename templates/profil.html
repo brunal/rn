@@ -3,9 +3,6 @@
 {% block body %}
 <p>Bonjour {{ user.name }}. Ton adresse email est {{ user.email }}, tu étudies à {{ user.ecole }} et ton numéro de contact est {{ user.portable }}.</p>
 
-    {% if message %}
-      <p>{{ message }}</p>
-    {% endif %}
     {% if form %}
         {{ render_simple_form(form) }}
     {% endif %}
