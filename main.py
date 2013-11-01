@@ -24,6 +24,7 @@ def create_app():
 
     db.init_app(app)
     login.login_manager.init_app(app)
+    app.context_processor(login.inject_roles)
 
     app.register_blueprint(views.bp_basic)
     app.register_blueprint(views.bp_responsable)

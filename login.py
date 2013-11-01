@@ -67,3 +67,10 @@ def requires_roles(*roles):
             return f(*args, **kwargs)
         return wrapped
     return wrapper
+
+
+def inject_roles():
+    role = current_user.is_authenticated() and get_current_user_role() or None
+    return {'volontaire': role is models.Volontaire,
+            'responsable': role is models.Responsable,
+            'brn': role is models.BRN}
