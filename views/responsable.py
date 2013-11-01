@@ -1,6 +1,6 @@
 # -*- encoding: utf-8 -*-
 """
-Vus pour les responsables : gestion d'un pôle
+Vues pour les responsables : gestion d'un pôle
 """
 from datetime import datetime, timedelta
 
@@ -8,12 +8,15 @@ from flask import Blueprint, render_template, redirect, url_for, request, flash
 from flask.ext.login import login_required, current_user
 
 import forms
+import upload
 import models
 from login import requires_roles
 
 
 bp = Blueprint(__name__, __name__)
 
+
+# Gestion de l'activité, réservée à son responsable
 
 @bp.route('/responsable')
 @login_required
@@ -26,7 +29,9 @@ def activite_get():
     else:
         form = forms.Activite()
 
-    return render_template('activite.html', form=form)
+    return render_template('activite.html', form=form,
+                           files=upload.list_files(current_user.user.email),
+                           extensions=upload.config.ALLOWED_EXTENSIONS)
 
 
 @bp.route('/responsable', methods=['POST'])
@@ -54,4 +59,32 @@ def activite_post():
 
         redirect(url_for('.activite_get'))
 
-    return render_template('activite.html', form=form)
+    return render_template('activite.html', form=form,
+                           files=upload.list_files(current_user.user.email),
+                           extensions=upload.config.ALLOWED_EXTENSIONS)
+
+
+@bp.route('/upload', methods=['POST'])
+@login_required
+@requires_roles(models.Responsable)
+def upload_page():
+    files = request.files.getlist('files')
+    successes, failures = upload.upload_files(current_user.user.email, files)
+    if successes:
+        flash(u'Succès : {}'.format(', '.join(successes)))
+    if failures:
+        flash(u'Echecs : {}'.format(', '.join(failures)))
+    return redirect(url_for('.activite_get'))
+
+
+@bp.route('/delete/<filename>')
+@login_required
+@requires_roles(models.Responsable)
+def delete_asset(filename):
+    result = upload.delete_file(current_user.user.email, filename)
+    if result is True:
+        flash(u'{} a bien été supprimé'.format(filename))
+    else:
+        # result is an error message
+        flash('Impossible de supprimer {} car {}'.format(filename, result))
+    return redirect(url_for('.activite_get'))

@@ -3,3 +3,4 @@ venv
 bdd.sqlite
 *.swp
 config.yaml
+media

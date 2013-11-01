@@ -9,6 +9,7 @@ from flask import Flask
 from models import db
 import views
 import login
+import upload
 
 CONFIG_FILE = 'config.yaml'
 
@@ -28,6 +29,9 @@ def create_app():
 
     app.register_blueprint(views.bp_basic)
     app.register_blueprint(views.bp_responsable)
+    app.register_blueprint(views.bp_activite)
+
+    upload.init_app(app)
 
     return app
 
