@@ -19,15 +19,15 @@ class config(object):
 login.login_manager.login_view = '.login_page'
 
 
-bp = Blueprint(__name__, __name__)
+bp = Blueprint(__name__, __name__, url_prefix='/')
 
 
-@bp.route('/')
+@bp.route('')
 def index():
     return render_template('index.html')
 
 
-@bp.route('/login', methods=['GET', 'POST'])
+@bp.route('login', methods=['GET', 'POST'])
 def login_page():
     form = forms.Login(request.form)
     if form.validate_on_submit():
@@ -43,13 +43,13 @@ def login_page():
     return render_template('login.html', form=form)
 
 
-@bp.route('/logout')
+@bp.route('logout')
 def logout():
     logout_user()
     return redirect(url_for('.login_page'))
 
 
-@bp.route('/register', methods=['GET', 'POST'])
+@bp.route('register', methods=['GET', 'POST'])
 def register():
     form = forms.Registration(request.form)
     if form.validate_on_submit():
@@ -68,14 +68,18 @@ def register():
         user_for_login = login.User(user)
         login_user(user_for_login)
 
-        # TODO: send email
+        msg = Message('Inscription volontaire RN réussie', recipients=[user.email])
+        msg.body = config.REGISTRATION_EMAIL_TEMPLATE.format(nom=user.name,
+                            profil=url_for('.profil', _external=True),
+                            index=url_for('.index', _external=True))
+        mail.send(msg)
 
         return redirect(url_for('.profil'))
 
     return render_template('register.html', form=form)
 
 
-@bp.route('/profil', methods=['GET', 'POST'])
+@bp.route('profil', methods=['GET', 'POST'])
 @login_required
 def profil():
     if login.get_current_user_role() is not models.Volontaire:
@@ -101,7 +105,7 @@ def profil():
 
             models.db.session.commit()
 
-            message = "Infos bien mises à jour !"
+            message = u'Infos bien mises à jour !'
     else:
         dispos_int = [d.quand for d in volontaire.disponibilites]
         form = forms.Profil(sweat=volontaire.sweat, disponibilites=dispos_int)

@@ -51,7 +51,7 @@ class Profil(Form):
                       choices=[(s.value, s.name) for s in Sweat],
                       coerce=int,
                       validators=mk_req('sweat'))
-    disponibilites = MultiCheckboxField('disponibilites',
+    disponibilites = MultiCheckboxField(u'disponibilités',
                       choices=[(s.value, s) for s in Disponibilite],
                       coerce=int)
 

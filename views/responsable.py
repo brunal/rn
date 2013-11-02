@@ -13,12 +13,12 @@ import models
 from login import requires_roles
 
 
-bp = Blueprint(__name__, __name__)
+bp = Blueprint(__name__, __name__, url_prefix='/')
 
 
 # Gestion de l'activité, réservée à son responsable
 
-@bp.route('/responsable')
+@bp.route('responsable')
 @login_required
 @requires_roles(models.Responsable)
 def activite_get():
@@ -35,7 +35,7 @@ def activite_get():
         return render_template('config_activite.html', form=form)
 
 
-@bp.route('/responsable', methods=['POST'])
+@bp.route('responsable', methods=['POST'])
 @login_required
 @requires_roles(models.Responsable)
 def activite_post():
@@ -65,7 +65,7 @@ def activite_post():
                            extensions=upload.config.ALLOWED_EXTENSIONS)
 
 
-@bp.route('/upload', methods=['POST'])
+@bp.route('upload', methods=['POST'])
 @login_required
 @requires_roles(models.Responsable)
 def upload_page():
@@ -78,7 +78,7 @@ def upload_page():
     return redirect(url_for('.activite_get'))
 
 
-@bp.route('/delete/<filename>')
+@bp.route('delete/<filename>')
 @login_required
 @requires_roles(models.Responsable)
 def delete_asset(filename):
