@@ -1,0 +1,11 @@
+Bonjour {nom},
+Ton inscription au site des volontaires de la RN a bien été enregistrée.
+Je t'invite à remplir ton profil (taille de sweat et disponibilités) à l'adresse
+{profil}.
+
+En espérant te voir à la journée des volontaires (cf. {index}), où tu recevras
+également ton bon de réduction remerciant ton implication.
+
+N'hésite pas à répondre à cet email en cas de question ou problème.
+
+L'équipe

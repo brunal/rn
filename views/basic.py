@@ -1,13 +1,19 @@
 # -*- encoding: utf-8 -*-
 """
-Views: from the URL to the rendered template
+Basic views: profile, register, login and logout from the URL to the rendered template
 """
 from flask import Blueprint, render_template, url_for, redirect, request
 from flask.ext.login import login_user, logout_user, login_required, current_user
+from flask_mail import Message
 
+from mail import mail
 import forms
 import models
 import login
+
+
+class config(object):
+    REGISTRATION_EMAIL_TEMPLATE = None
 
 
 login.login_manager.login_view = '.login_page'

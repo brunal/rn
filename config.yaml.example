@@ -1,3 +1,4 @@
+SERVER_NAME: 'myhostname'
 SQLALCHEMY_DATABASE_URI: 'sqlite:///path_to_db'
 DEBUG: True
 SECRET_KEY: 'long and string that must not be shared'
@@ -6,3 +7,10 @@ ALLOWED_EXTENSIONS:
     - tiff
     - exe
     - jar
+MAIL_TEMPLATES: 'templates/mail/'
+MAIL_SERVER: 'smtp.mymail.com'
+MAIL_PORT: 465
+MAIL_USE_SSL: True
+MAIL_DEFAULT_SENDER: 'an@ddress.email'
+MAIL_USERNAME: 'vladivostok'
+MAIL_PASSWORD: 'rococo'
