@@ -2,11 +2,15 @@
 <html lang="fr">
 <head>
 <title>{% block title %}{% endblock %} - RN 2013</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}"/>
 </head>
 
 <body>
+
+<div id="all-but-footer">
+
+<nav class="nav-collapse">
 {% block menu %}
-<nav>
     <ul>
         <li><a href="{{ url_for('views.basic.index') }}">Index</a></li>
         {% if current_user.is_anonymous() %}
@@ -27,28 +31,48 @@
             {% endif %}
         {% endif %}
     </ul>
-</nav>
 {% endblock menu %}
+</nav>
 
+<div id="push-header"></div>
+<div id="main-wrapper">
 
-{% block messages %}
-{% with messages = get_flashed_messages() %}
-  {% if messages or message %}
-    <ul class="flashes">
-    {% if message %}
-      <li>{{ message }}</li>
-    {% endif %}
+<div role="main" id="main">
+    <div id="messages">
+    {% block messages %}
+    {% with messages = get_flashed_messages() %}
+      {% if messages or message %}
+        <ul class="flashes">
+        {% if message %}
+          <li>{{ message }}</li>
+        {% endif %}
 
-    {% for message in messages %}
-      <li>{{ message }}</li>
-    {% endfor %}
-    </ul>
-  {% endif %}
-{% endwith %}
-{% endblock %}
+        {% for message in messages %}
+          <li>{{ message }}</li>
+        {% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
+    {% endblock %}
+    </div>
 
+    <div id="body">
+    {% block body %}
+    {% endblock %}
+    </div>
+</div>
+</div>
 
-{% block body %}
-{% endblock %}
+<div id="push-footer"></div>
+</div>
+
+<div id="footer">
+    <p>Réalisé par <a href="mailto: brunocauet *a* gmail *point* com">Bruno Cauet</a> - <a href="https://github.com/brunal/rn">Fourchette-moi sur github</a></p>
+</div>
+
+<script>
+    var nav = responsiveNav(".nav-collapse");
+</script>
+
 </body>
 </html>
