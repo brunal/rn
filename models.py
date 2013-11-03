@@ -142,7 +142,7 @@ class BRN(db.Model):
 class Activite(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     responsable_id = db.Column(db.Integer, db.ForeignKey('responsable.id'))
-    responsable = db.relationship('Responsable', backref=db.backref('activite', uselist=False))
+    responsable = db.relationship('Responsable', backref=db.backref('activites'))
 
     debut = db.Column(db.DateTime)
     fin = db.Column(db.DateTime)

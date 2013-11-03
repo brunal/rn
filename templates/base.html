@@ -20,12 +20,12 @@
         <li><a href="{{ url_for('views.basic.logout') }}">Déconnexion</a></li>
         <li><a href="{{ url_for('views.basic.profil') }}">Profil</a></li>
 
-        <li><a href="{{ url_for('views.activite.list_activites') }}">Activités</a></li>
+        <li><a href="{{ url_for('views.activite.list_activites') }}">Toutes les activités</a></li>
 
             {% if volontaire %}
 
             {% elif responsable %}
-            <li><a href="{{ url_for('views.responsable.activite_get') }}">Mon activité</a></li>
+            <li><a href="{{ url_for('views.responsable.list_activites') }}">Mes activités</a></li>
             {% elif brn %}
 
             {% endif %}
