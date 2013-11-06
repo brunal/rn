@@ -1,17 +1,6 @@
 {% extends "base.html" %}
 {% block body %}
 
-{% if misconfigured %}
-<ul>
- Les activités suivantes ne sont pas complètement renseignées. Merci d'y remédier.
-{% for mis in misconfigured %}
-    <li><a href="{{ url_for('views.responsable.activite_get', a_id=mis.id) }}">
-        Activité n°{{ mis.id }}
-    </a></li>
-{% endfor %}
-</ul>
-{% endif %}
-
 <ul>
     Les activités que tu as configurées sont les suivantes :
     {% for activite in activites %}
@@ -19,9 +8,7 @@
     le {{ activite.debut.date() }} de {{ activite.debut.time() }} à {{ activite.fin.time() }} à {{ activite.lieu }}
     </li>
     {% endfor %}
-    {% if not misconfigured %}
-    <li><a href="{{ url_for('views.responsable.add_activite') }}">Ajouter une activité</a></li>
-    {% endif %}
+    <li><a href="{{ url_for('views.responsable.activite_get') }}">Ajouter une activité</a></li>
 </ul>
 
 Une activité sera attribuée <em>automatiquement</em> à chaque volontaire.

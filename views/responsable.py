@@ -30,35 +30,20 @@ def get_activite(id):
 @requires_roles(models.Responsable)
 def list_activites():
     activites = models.Activite.query.filter(models.Responsable.id == current_user.user.role.id)
-    # check which ones are incomplete
-    misconfigured = []
-    correct = []
-    for a in activites:
-        if not a.nom or not a.lieu or not a.debut or not a.fin or not a.nombre_volontaires:
-            misconfigured.append(a)
-        else:
-            correct.append(a)
-    return render_template('responsable_activites.html', activites=correct, misconfigured=misconfigured)
+    return render_template('responsable_activites.html', activites=activites)
 
 
-@bp.route('nouvelle')
-@login_required
-@requires_roles(models.Responsable)
-def add_activite():
-    activite = models.Activite()
-    activite.responsable = current_user.user.role
-    models.db.session.add(activite)
-    models.db.session.commit()
-    flash(u'Activité créée')
-    return redirect(url_for('.activite_get', a_id=activite.id))
-
-
+@bp.route('nouvelle/')
 @bp.route('<int:a_id>/')
 @login_required
 @requires_roles(models.Responsable)
-def activite_get(a_id):
+def activite_get(a_id=None, form=None):
+    if a_id is None:
+        form = form or forms.Activite()
+        return render_template('config_activite.html', form=form)
+
     activite = get_activite(a_id)
-    form = forms.Activite(obj=activite)
+    form = form or forms.Activite(obj=activite)
     if activite.debut:
         form.jour.data = (activite.debut.date() - forms.JEUDI).days
     return render_template('config_activite.html', form=form, a_id=activite.id,
@@ -66,27 +51,33 @@ def activite_get(a_id):
                            extensions=upload.config.ALLOWED_EXTENSIONS)
 
 
+@bp.route('nouvelle/', methods=['POST'])
 @bp.route('<int:a_id>/', methods=['POST'])
 @login_required
 @requires_roles(models.Responsable)
-def activite_post(a_id):
+def activite_post(a_id=None):
     form = forms.Activite(request.form)
-    if form.validate():
+    if not form.validate():
+        return activite_get(a_id, form=form)
+
+    if a_id is None:
+        activite = models.Activite()
+        activite.responsable = current_user.user.role
+        models.db.session.add(activite)
+        flash(u'Activité créée')
+    else:
         activite = get_activite(a_id)
-        form.populate_obj(activite)
-
-        jour = forms.JEUDI + timedelta(form.jour.data)
-        activite.debut = datetime.combine(jour, form.debut.data)
-        activite.fin = datetime.combine(jour, form.fin.data)
-
         flash(u'Activité mise à jour')
-        models.db.session.commit()
 
-        redirect(url_for('.activite_get', a_id=activite.id))
+    form.populate_obj(activite)
 
-    return render_template('config_activite.html', form=form,
-                           files=upload.list_files(activite.id),
-                           extensions=upload.config.ALLOWED_EXTENSIONS)
+    jour = forms.JEUDI + timedelta(form.jour.data)
+    activite.debut = datetime.combine(jour, form.debut.data)
+    activite.fin = datetime.combine(jour, form.fin.data)
+
+    models.db.session.commit()
+
+    return redirect(url_for('.activite_get', a_id=activite.id))
 
 
 @bp.route('<int:a_id>/upload', methods=['POST'])

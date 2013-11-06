@@ -5,9 +5,11 @@
         {{ render_simple_form(form) }}
     {% endif %}
 
+    {% if a_id %}
     <p><a href="{{ url_for('views.responsable.delete_activite', a_id=a_id) }}">
             Supprimer définitivement l'activité
     </a></p>
+    {% endif %}
 
     {% if extensions %}
     <div>
