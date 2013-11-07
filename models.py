@@ -82,6 +82,11 @@ class Volontaire(db.Model):
         self.user = user
         self.sweat = sweat
 
+    @property
+    def planning(self):
+        return ([aff.activite for aff in self.affectations] +
+                Planning.query.all()).sort(key=lambda e: e.debut)
+
     def __repr__(self):
         return "{}(user_id={})".format(self.__class__.__name__, self.user_id)
 
@@ -137,17 +142,34 @@ class BRN(db.Model):
         return "{} {}".format(self.__class__.__name__, self.user)
 
 
-# Activités
+# Planning et activités
 
-class Activite(db.Model):
+class Evenement(object):
+    debut = db.Column(db.DateTime)
+    fin = db.Column(db.DateTime)
+    lieu = db.Column(db.String)
+    nom = db.Column(db.String)
+
+
+class Activite(db.Model, Evenement):
     id = db.Column(db.Integer, primary_key=True)
     responsable_id = db.Column(db.Integer, db.ForeignKey('responsable.id'))
     responsable = db.relationship('Responsable', backref=db.backref('activites'))
 
-    debut = db.Column(db.DateTime)
-    fin = db.Column(db.DateTime)
-    nom = db.Column(db.String)
     description = db.Column(db.Text)
-    lieu = db.Column(db.String)
     sexe = db.Column(db.Integer)
     nombre_volontaires = db.Column(db.Integer)
+
+
+class Affectation(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+
+    volontaire_id = db.Column(db.Integer, db.ForeignKey('volontaire.id'))
+    volontaire = db.relationship('Volontaire', backref=db.backref('affectations'))
+
+    activite_id = db.Column(db.Integer, db.ForeignKey('activite.id'))
+    activite = db.relationship('Activite', backref=db.backref('affectations'))
+
+
+class Planning(db.Model, Evenement):
+    id = db.Column(db.Integer, primary_key=True)
