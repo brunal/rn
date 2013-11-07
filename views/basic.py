@@ -2,7 +2,7 @@
 """
 Basic views: profile, register, login and logout from the URL to the rendered template
 """
-from flask import Blueprint, render_template, url_for, redirect, request
+from flask import Blueprint, render_template, url_for, redirect, request, flash
 from flask.ext.login import login_user, logout_user, login_required, current_user
 from flask_mail import Message
 
@@ -38,7 +38,8 @@ def login_page():
             login_user(user)
             return redirect(request.args.get('next') or url_for('.index'))
 
-        return render_template('login.html', form=form, message='Email ou mot de passe invalide')
+        flash('Email ou mot de passe invalide')
+        return render_template('login.html', form=form)
 
     return render_template('login.html', form=form)
 
@@ -105,13 +106,11 @@ def profil():
 
             models.db.session.commit()
 
-            message = u'Infos bien mises à jour !'
+            flash(u'Infos bien mises à jour !')
     else:
         dispos_int = [d.quand for d in volontaire.disponibilites]
         form = forms.Profil(sweat=volontaire.sweat, disponibilites=dispos_int)
-        message = None
 
     return render_template('profil.html',
                            form=form,
-                           user=current_user.user,
-                           message=message)
+                           user=current_user.user)

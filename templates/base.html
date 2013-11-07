@@ -40,21 +40,15 @@
 
 <div role="main" id="main" class="container">
     <div id="messages">
-    {% block messages %}
     {% with messages = get_flashed_messages() %}
-      {% if messages or message %}
+      {% if messages %}
         <ul class="flashes">
-        {% if message %}
-          <li>{{ message }}</li>
-        {% endif %}
-
         {% for message in messages %}
           <li>{{ message }}</li>
         {% endfor %}
         </ul>
       {% endif %}
     {% endwith %}
-    {% endblock %}
     </div>
 
     <div id="body">
