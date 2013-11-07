@@ -6,7 +6,7 @@ from functools import wraps
 import logging
 
 from flask import abort
-from flask.ext.login import LoginManager, UserMixin, current_user
+from flask.ext.login import LoginManager, UserMixin, current_user, login_required
 
 import models
 
@@ -65,7 +65,7 @@ def requires_roles(*roles):
             if get_current_user_role() not in roles:
                 abort(401)
             return f(*args, **kwargs)
-        return wrapped
+        return login_required(wrapped)
     return wrapper
 
 

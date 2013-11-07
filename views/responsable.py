@@ -5,7 +5,7 @@ Vues pour les responsables : gestion d'un pôle
 from datetime import datetime, timedelta
 
 from flask import Blueprint, render_template, redirect, url_for, request, flash, abort
-from flask.ext.login import login_required, current_user
+from flask.ext.login import current_user
 
 import forms
 import upload
@@ -26,7 +26,6 @@ def get_activite(id):
 
 
 @bp.route('')
-@login_required
 @requires_roles(models.Responsable)
 def list_activites():
     activites = models.Activite.query.filter(models.Responsable.id == current_user.user.role.id)
@@ -35,7 +34,6 @@ def list_activites():
 
 @bp.route('nouvelle/')
 @bp.route('<int:a_id>/')
-@login_required
 @requires_roles(models.Responsable)
 def activite_get(a_id=None, form=None):
     if a_id is None:
@@ -53,7 +51,6 @@ def activite_get(a_id=None, form=None):
 
 @bp.route('nouvelle/', methods=['POST'])
 @bp.route('<int:a_id>/', methods=['POST'])
-@login_required
 @requires_roles(models.Responsable)
 def activite_post(a_id=None):
     form = forms.Activite(request.form)
@@ -81,7 +78,6 @@ def activite_post(a_id=None):
 
 
 @bp.route('<int:a_id>/upload', methods=['POST'])
-@login_required
 @requires_roles(models.Responsable)
 def upload_page(a_id):
     activite = get_activite(a_id)
@@ -95,7 +91,6 @@ def upload_page(a_id):
 
 
 @bp.route('<int:a_id>/delete/')
-@login_required
 @requires_roles(models.Responsable)
 def delete_activite(a_id):
     activite = get_activite(a_id)
@@ -106,7 +101,6 @@ def delete_activite(a_id):
 
 
 @bp.route('<int:a_id>/delete/<filename>')
-@login_required
 @requires_roles(models.Responsable)
 def delete_asset(a_id, filename):
     activite = get_activite(a_id)
