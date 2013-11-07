@@ -11,8 +11,8 @@
     <dt>Préférence de sexe des volontaires</dt> <dd>{{ activite.sexe }}</dd>
     {% endif %}
     <dt>Responsable</dt>
-    <dd><a href="mailto:{{ activite.responsable.email }}">
-        {{ activite.responsable.nom }}
+    <dd><a href="mailto:{{ activite.responsable.user.email }}">
+        {{ activite.responsable.user.nom }}
     </a></dd>
 </dl>
 
