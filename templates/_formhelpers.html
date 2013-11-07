@@ -13,13 +13,15 @@
 
 {% macro render_form(form) %}
   {{ form.hidden_tag() }}
+  <dl class="dl-horizontal">
   {% for field in form if not field.type == 'CSRFTokenField' %}
-    <dl> {{ render_field(field) }} </dl>
+  {{ render_field(field) }}
   {% endfor %}
+  </dl>
 {% endmacro %}
 
 {% macro render_simple_form(form) %}
-  <form method="POST">
+  <form method="POST" role="form">
     {{ render_form(form) }}
     <input type="submit"/>
   </form>

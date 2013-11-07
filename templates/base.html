@@ -2,42 +2,43 @@
 <html lang="fr">
 <head>
 <title>{% block title %}{% endblock %} - RN 2013</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}"/>
+    <meta name="viewport" content="with=device-width, initial-scale=1.0"/>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}"/>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap-theme.min.css') }}"/>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}"/>
 </head>
 
 <body>
 
-<div id="all-but-footer">
 
-<nav class="nav-collapse">
+<nav class="navbar navbar-default" role="navigation">
+    <div class="collapse navbar-collapse">
 {% block menu %}
-    <ul>
-        <li><a href="{{ url_for('views.basic.index') }}">Index</a></li>
-        {% if current_user.is_anonymous() %}
-        <li><a href="{{ url_for('views.basic.login_page') }}">Connexion</a></li>
-        <li><a href="{{ url_for('views.basic.register') }}">Enregistrement</a></li>
-        {% else %}
-        <li><a href="{{ url_for('views.basic.logout') }}">Déconnexion</a></li>
-        <li><a href="{{ url_for('views.basic.profil') }}">Profil</a></li>
+        <ul class="nav navbar-nav">
+            <li><a href="{{ url_for('views.basic.index') }}">Index</a></li>
+            {% if current_user.is_anonymous() %}
+            <li><a href="{{ url_for('views.basic.login_page') }}">Connexion</a></li>
+            <li><a href="{{ url_for('views.basic.register') }}">Enregistrement</a></li>
+            {% else %}
+            <li><a href="{{ url_for('views.basic.logout') }}">Déconnexion</a></li>
+            <li><a href="{{ url_for('views.basic.profil') }}">Profil</a></li>
 
-        <li><a href="{{ url_for('views.activite.list_activites') }}">Toutes les activités</a></li>
+            <li><a href="{{ url_for('views.activite.list_activites') }}">Toutes les activités</a></li>
 
-            {% if volontaire %}
+                {% if volontaire %}
 
-            {% elif responsable %}
-            <li><a href="{{ url_for('views.responsable.list_activites') }}">Mes activités</a></li>
-            {% elif brn %}
-            <li><a href="{{ url_for('views.brn.planning_poles') }}">Planning des pôles</a></li>
+                {% elif responsable %}
+                <li><a href="{{ url_for('views.responsable.list_activites') }}">Mes activités</a></li>
+                {% elif brn %}
+                <li><a href="{{ url_for('views.brn.planning_poles') }}">Planning des pôles</a></li>
+                {% endif %}
             {% endif %}
-        {% endif %}
-    </ul>
+        </ul>
 {% endblock menu %}
+    </div>
 </nav>
 
-<div id="push-header"></div>
-<div id="main-wrapper">
-
-<div role="main" id="main">
+<div role="main" id="main" class="container">
     <div id="messages">
     {% block messages %}
     {% with messages = get_flashed_messages() %}
@@ -61,18 +62,14 @@
     {% endblock %}
     </div>
 </div>
+
+<div id="footer" class="navbar navbar-default navbar-fixed-bottom container">
+    <p>Réalisé par <a href="mailto: brunocauet *a* gmail *point* com">Bruno Cauet</a>
+    -
+    <a href="https://github.com/brunal/rn">Fourchette-moi sur github</a></p>
 </div>
 
-<div id="push-footer"></div>
-</div>
-
-<div id="footer">
-    <p>Réalisé par <a href="mailto: brunocauet *a* gmail *point* com">Bruno Cauet</a> - <a href="https://github.com/brunal/rn">Fourchette-moi sur github</a></p>
-</div>
-
-<script>
-    var nav = responsiveNav(".nav-collapse");
-</script>
-
+<script src={{ url_for('static', filename='css/js/jquery-1.10.2.min.js') }}"></script>
+<script src={{ url_for('static', filename='css/js/bootstrap.min.js') }}"></script>
 </body>
 </html>
