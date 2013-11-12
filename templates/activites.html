@@ -1,7 +1,12 @@
 {% extends "base.html" %}
 {% block body %}
 <ul>
-    Les activités de la RN ayant besoin de volontaires sont les suivantes :
+    {% if volontaire %}
+    Tes activités de la RN
+    {% else %}
+    Les activités de la RN ayant besoin de volontaires
+    {% endif %}
+    sont les suivantes :
     {% for activite in activites %}
     <li><a href="{{ url_for('views.activite.activite', activite_id=activite.id) }}">{{ activite.nom }}</a>
     le {{ activite.debut.date() }} de {{ activite.debut.time() }} à {{ activite.fin.time() }} à {{ activite.lieu }}

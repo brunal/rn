@@ -82,10 +82,16 @@ class Volontaire(db.Model):
         self.user = user
         self.sweat = sweat
 
+    def is_affected_to(self, a_id):
+        return self.affectations.filter(Affectation.activite_id == a_id).count() > 0
+
+    @property
+    def activites(self):
+        return [aff.activite for aff in self.affectations]
+
     @property
     def planning(self):
-        return ([aff.activite for aff in self.affectations] +
-                Planning.query.all()).sort(key=lambda e: e.debut)
+        return (self.activites + Planning.query.all()).sort(key=lambda e: e.debut)
 
     def __repr__(self):
         return "{}(user_id={})".format(self.__class__.__name__, self.user_id)
