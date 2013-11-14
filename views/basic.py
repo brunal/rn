@@ -16,7 +16,7 @@ class config(object):
     REGISTRATION_EMAIL_TEMPLATE = None
 
 
-login.login_manager.login_view = '.login_page'
+login.login_manager.login_view = 'views.basic.login_page'
 
 
 bp = Blueprint(__name__, __name__, url_prefix='/')
