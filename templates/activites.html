@@ -1,18 +1,42 @@
 {% extends "base.html" %}
 {% block body %}
-<ul>
+<h2>
     {% if volontaire %}
     Tes activités de la RN
     {% else %}
-    Les activités de la RN ayant besoin de volontaires
+    Activités de la RN ayant besoin de volontaires
     {% endif %}
-    sont les suivantes :
-    {% for activite in activites %}
-    <li><a href="{{ url_for('views.activite.activite', activite_id=activite.id) }}">{{ activite.nom }}</a>
-    le {{ activite.debut.date() }} de {{ activite.debut.time() }} à {{ activite.fin.time() }} à {{ activite.lieu }}
-    </li>
-    {% endfor %}
-</ul>
+</h2>
+
+<table>
+    <thead>
+        <tr>
+            <th>Jour</th>
+            <th>Début</th>
+            <th>Fin</th>
+            <th>Nom</th>
+            <th>Lieu</th>
+            <th>Responsable</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {% for a in activites %}
+        <tr>
+            <td>{{ a.debut|date }}</td>
+            <td>{{ a.debut|time }}</td>
+            <td>{{ a.fin|time }}</td>
+            <td><a href="{{ url_for('views.activite.activite', activite_id=a.id) }}">
+                {{ a.nom }}
+            </td></a>
+            <td>{{ a.lieu }}</td>
+            <td><a href="mailto:{{ a.responsable.user.email }}">
+                {{ a.responsable.user.name }}
+            </a></td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
 
 Une activité sera attribuée <em>automatiquement</em> à chaque volontaire.
 {% endblock %}

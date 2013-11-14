@@ -2,6 +2,7 @@ from basic import config as config_basic, \
                   bp as bp_basic  # register login logout profil
 from responsable import bp as bp_responsable  # activities management
 from activite import bp as bp_activite  # activities for non-manager
+from brn import bp as bp_brn  # supervision for BRN members
 
 
 def init_app(app):

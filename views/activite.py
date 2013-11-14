@@ -23,6 +23,7 @@ def list_activites():
         activites = Activite.query.all()
     elif u.volontaire:
         activites = u.volontaire.activites
+    activites.sort(key=lambda a: a.debut)
     return render_template('activites.html', activites=activites)
 
 
