@@ -8,9 +8,9 @@ from flask import Blueprint, render_template, redirect, url_for, request, flash,
 from flask.ext.login import current_user
 
 import forms
-import upload
 import models
 from login import requires_roles
+from lib import upload
 
 
 bp = Blueprint(__name__, __name__, url_prefix='/responsable/')

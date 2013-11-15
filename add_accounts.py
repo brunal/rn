@@ -11,7 +11,7 @@ from flask_mail import Message
 
 from main import create_app
 from models import db, User, Responsable, BRN
-from mail import mail
+from lib import mail
 
 
 def send_email(m):

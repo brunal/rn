@@ -3,15 +3,14 @@
 Vues d'activités pour ceux qui n'en sont pas responsable
 """
 from cStringIO import StringIO
-import ucsv
 
 from flask import Blueprint, Response, send_from_directory, abort, render_template
 from flask.ext.login import login_required, current_user
 from werkzeug import secure_filename
 
-import upload
 from models import Activite
-from filters import to_date, to_time
+from lib import upload, ucsv
+from lib.filters import to_date, to_time
 
 
 bp = Blueprint(__name__, __name__, url_prefix='/activite/')

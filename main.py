@@ -9,11 +9,9 @@ import yaml
 from flask import Flask
 
 from models import db
-from mail import mail
 from login import login_manager, inject_roles
 import views
-import upload
-import filters
+from lib import upload, filters, mail
 
 
 CONFIG_FILE = 'config.yaml'
@@ -49,11 +47,11 @@ def create_app():
     db.init_app(app)
     mail.init_app(app)
     login_manager.init_app(app)
-    filters.init_app(app)
     app.context_processor(inject_roles)
 
     # init my modules
     upload.init_app(app)
+    filters.init_app(app)
     views.init_app(app)
 
     # register routes
