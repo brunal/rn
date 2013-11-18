@@ -8,7 +8,7 @@ import models
 from login import requires_roles
 
 
-bp = Blueprint(__name__, __name__, url_prefix='/brn')
+bp = Blueprint(__name__, __name__, url_prefix='/brn/')
 
 
 @bp.route('affectations')
