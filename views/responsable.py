@@ -28,7 +28,7 @@ def get_activite(id):
 @bp.route('')
 @requires_roles(models.Responsable)
 def list_activites():
-    activites = models.Activite.query.filter(models.Responsable.id == current_user.user.role.id)
+    activites = current_user.user.role.activites
     return render_template('responsable_activites.html', activites=activites)
 
 
