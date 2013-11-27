@@ -10,7 +10,7 @@ from flask import url_for
 from flask_mail import Message
 
 from main import create_app
-from models import db, User, Responsable, BRN
+from models import db, User, Responsable, BRN, Sexe
 from lib import mail
 
 
@@ -36,11 +36,9 @@ def add(model, f):
         except ValueError:
             raise ValueError("La ligne semble trop courte (sur {}) !".format(line))
 
-        if sexe == "M":
-            sexe = 1
-        elif sexe == "F":
-            sexe = 2
-        else:
+        try:
+            sexe = Sexe[sexe].value
+        except:
             raise ValueError("sexe: reçu {} au lieu de M ou F pour {}".format(sexe, name))
         u = User(email, password, name, sexe, ecole, portable)
         m = model(u)

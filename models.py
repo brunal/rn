@@ -13,6 +13,12 @@ class Sexe(Enum):
     F = 2
 
 
+class SexeActivite(Enum):
+    Aucune = 0
+    M = 1
+    F = 2
+
+
 class Sweat(Enum):
     XS = 1
     S = 2
@@ -48,9 +54,26 @@ class User(db.Model):
     password = db.Column(db.String)
     name = db.Column(db.String)
 
-    sexe = db.Column(db.Integer)
+    _sexe = db.Column(db.Integer)
     ecole = db.Column(db.String)
     portable = db.Column(db.String)
+
+    @property
+    def sexe(self):
+        return self._sexe
+
+    @sexe.setter
+    def sexe(self, s):
+        if isinstance(s, int):
+            self._sexe = s
+        else:
+            self._sexe = s.value
+
+    def get_sexe(self):
+        return Sexe(self._sexe)
+
+    def show_sexe(self):
+        return self.get_sexe().name
 
     def __init__(self, email, password, name, sexe, ecole, portable):
         self.email = email
@@ -164,8 +187,25 @@ class Activite(db.Model, Evenement):
     responsable = db.relationship('Responsable', backref=db.backref('activites'))
 
     description = db.Column(db.Text)
-    sexe = db.Column(db.Integer)
     nombre_volontaires = db.Column(db.Integer)
+    _sexe = db.Column(db.Integer)
+
+    @property
+    def sexe(self):
+        return self._sexe
+
+    @sexe.setter
+    def sexe(self, s):
+        if isinstance(s, int):
+            self._sexe = s
+        else:
+            self._sexe = s.value
+
+    def get_sexe(self):
+        return SexeActivite(self._sexe)
+
+    def show_sexe(self):
+        return self.get_sexe().name
 
 
 class Affectation(db.Model):

@@ -8,7 +8,7 @@
     <dt>Fin</dt> <dd>{{ activite.fin.time() }}</dd>
     <dt>Nombre de volontaires demandé</dt> <dd> {{ activite.nombre_volontaires }}</dd>
     {% if activite.sexe %}
-    <dt>Préférence de sexe des volontaires</dt> <dd>{{ activite.sexe }}</dd>
+    <dt>Préférence de sexe des volontaires</dt> <dd>{{ activite.show_sexe() }}</dd>
     {% endif %}
     <dt>Responsable</dt>
     <dd><a href="mailto:{{ activite.responsable.user.email }}">

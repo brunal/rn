@@ -2,14 +2,14 @@
 """
 All forms are defined here
 """
-from datetime import datetime, date
+from datetime import date
 
 from flask.ext.wtf import Form
 from wtforms import StringField, PasswordField, RadioField, DateTimeField, \
                     SelectMultipleField, SelectField, TextAreaField, \
                     IntegerField, validators, widgets
 
-from models import Sexe, Sweat, Disponibilite
+from models import Sexe, SexeActivite, Sweat, Disponibilite
 
 
 def mk_req(nom):
@@ -82,5 +82,5 @@ class Activite(Form):
     lieu = StringField('lieu', validators=mk_req('lieu'))
     nombre_volontaires = IntegerField(u'nombre de volontaires demandé')
     sexe = RadioField(u'préférence quant au sexe des volontaires',
-                     choices=[(s.value, s.name) for s in Sexe] + [(0, "aucune")],
-                     coerce=int)
+                      choices=[(s.value, s.name) for s in SexeActivite],
+                      coerce=int)
