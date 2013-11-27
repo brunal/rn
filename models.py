@@ -83,7 +83,8 @@ class Volontaire(db.Model):
         self.sweat = sweat
 
     def is_affected_to(self, a_id):
-        return self.affectations.filter(Affectation.activite_id == a_id).count() > 0
+        return Affectation.query.filter((Affectation.activite_id == a_id) &
+                                        (Affectation.volontaire_id == self.id)).count() > 0
 
     @property
     def activites(self):
