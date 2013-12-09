@@ -1,10 +1,18 @@
-{% from "_formhelpers.html" import render_simple_form %}
+{% from "_formhelpers.html" import render_field %}
 {% extends "base.html" %}
 {% block body %}
 <p>Bonjour {{ user.name }}. Ton adresse email est {{ user.email }}, tu étudies à {{ user.ecole }} et ton numéro de contact est {{ user.portable }}.<br/>
 Tu es inscrit en tant que {% if volontaire %}volontaire{% elif responsable %}responsable de pôle{% elif brn %}membre du BRN{% endif %}.</p>
 
-    {% if form %}
-        {{ render_simple_form(form) }}
-    {% endif %}
+{% if form %}
+    <form method="POST" role="form">
+        {{ form.hidden_tag() }}
+        <dl class="dl-horizontal">
+        {{ render_field(form.sweat) }}
+        <p>Si tu es disponible pendant ces demi-journées et que tu es prêt à apporter ton aide, coche les cases que tu veux.</p>
+        {{ render_field(form.disponibilites) }}
+        </dl>
+        <input type="submit"/>
+    </form>
+{% endif %}
 {% endblock %}
