@@ -46,7 +46,7 @@ def csv_activites():
                     a.nom, a.lieu,
                     a.responsable.user.name, a.responsable.user.email])
 
-    return Response(csv_activites.getvalue(), mimetype="text/csv",
+    return Response(csv_activites.getvalue(), content_type="text/csv; charset=utf-8",
                     headers={"Content-Disposition": "attachment;filename=planning.csv"})
 
 
