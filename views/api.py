@@ -19,7 +19,7 @@ def try_register(data):
         email = data['email']
 
         password = data['password']  # need treatement?
-        user = models.User(data['email'], data['name'], data['sexe'], data['ecole'], data['portable'])
+        user = models.User(data['email'], data['name'], -1, data['ecole'], data['portable'])
 
         Role = Volontaire
         with open(RESPOS_POLES_FILE, 'rb') as f:
