@@ -55,10 +55,7 @@ def create_app():
     views.init_app(app)
 
     # register routes
-    app.register_blueprint(views.bp_basic)
-    app.register_blueprint(views.bp_responsable)
-    app.register_blueprint(views.bp_activite)
-    app.register_blueprint(views.bp_brn)
+    map(app.register_blueprint, views.all_blueprints)
 
     return app
 

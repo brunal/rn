@@ -3,6 +3,7 @@ SQLALCHEMY_DATABASE_URI: 'sqlite:///path_to_db'
 DEBUG: True
 SECRET_KEY: 'long and string that must not be shared'
 UPLOAD_FOLDER: '/path/to/activites/assets/'
+RESPOS_POLES_FILE: '/path/to/respos/mail/list'
 ALLOWED_EXTENSIONS:
     - tiff
     - exe
