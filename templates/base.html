@@ -18,7 +18,6 @@
             <li><a href="{{ url_for('views.basic.index') }}">Index</a></li>
             {% if current_user.is_anonymous() %}
             <li><a href="{{ url_for('views.basic.login_page') }}">Connexion</a></li>
-            <li><a href="{{ url_for('views.basic.register') }}">Enregistrement</a></li>
             {% else %}
             <li><a href="{{ url_for('views.basic.logout') }}">Déconnexion</a></li>
             <li><a href="{{ url_for('views.basic.profil') }}">Profil</a></li>

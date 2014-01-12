@@ -9,7 +9,7 @@ from wtforms import StringField, PasswordField, RadioField, DateTimeField, \
                     SelectMultipleField, SelectField, TextAreaField, \
                     IntegerField, validators, widgets
 
-from models import Sexe, SexeActivite, Sweat, Disponibilite
+from models import SexeActivite, Sweat, Disponibilite
 
 
 def mk_req(nom):
@@ -17,24 +17,6 @@ def mk_req(nom):
 
 
 # Utilisateurs
-
-class Registration(Form):
-
-    email = StringField('email', validators=mk_req('email'))
-    password = PasswordField('mot de passe',
-                             validators=[validators.Required(message=u'Mot de passe obligatoire'),
-                                         validators.Length(min=5, message=u'Minimum %(min)d caractères')])
-    password2 = PasswordField(u'répéter le mot de passe',
-                              validators=[validators.EqualTo(fieldname='password',
-                                                             message=u'Les deux mots de passe doivent être égaux')])
-    name = StringField('nom', validators=mk_req('nom'))
-    sexe = RadioField('sexe',
-                      choices=[(s.value, s.name) for s in Sexe],
-                      coerce=int,
-                      validators=mk_req('sexe'))
-    ecole = StringField(u'école', validators=mk_req(u'école'))
-    portable = StringField('portable', validators=mk_req('portable'))
-
 
 class Login(Form):
     email = StringField('email', validators=mk_req('email'))
