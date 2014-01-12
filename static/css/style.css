@@ -1,0 +1,7 @@
+.dl-horizontal dt {
+    white-space: normal;
+}
+
+dl ul { /* List in a form */
+    list-style-type: none;
+}
