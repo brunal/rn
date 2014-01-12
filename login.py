@@ -1,7 +1,7 @@
 """
 Tools related to user authentication & login
 """
-from hashlib import sha1
+from hashlib import md5
 from functools import wraps
 import logging
 
@@ -10,8 +10,16 @@ from flask.ext.login import LoginManager, UserMixin, current_user, login_require
 
 import models
 
+MD5_FMT = None
 
 login_manager = LoginManager()
+
+
+def init_app(app):
+    global MD5_FMT
+    MD5_FMT = app.config['MD5_FMT']
+    app.context_processor(inject_roles)
+    login_manager.init_app(app)
 
 
 class User(UserMixin):
@@ -36,7 +44,7 @@ class User(UserMixin):
 
 
 def hash_password(password):
-    return sha1(password).hexdigest()
+    return md5(MD5_FMT % password).hexdigest()
 
 
 def authentify(email, password):

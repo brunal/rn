@@ -2,6 +2,7 @@ SERVER_NAME: 'myhostname'
 SQLALCHEMY_DATABASE_URI: 'sqlite:///path_to_db'
 DEBUG: True
 SECRET_KEY: 'long and string that must not be shared'
+MD5_FMT: 'blahblih%s'
 UPLOAD_FOLDER: '/path/to/activites/assets/'
 RESPOS_POLES_FILE: '/path/to/respos/mail/list'
 ALLOWED_EXTENSIONS:

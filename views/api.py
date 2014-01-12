@@ -1,3 +1,4 @@
+#-*- encoding: utf-8 -*-
 import logging
 
 from flask import Blueprint, jsonify, request
@@ -17,9 +18,8 @@ def register():
 def try_register(data):
     try:
         email = data['email']
-
-        password = data['password']  # need treatement?
-        user = User(data['email'], password, data['name'], -1, data['ecole'], data['portable'])
+        password = data['password']
+        user = User(email, password, data['name'], -1, data['ecole'], data['portable'])
 
         Role = Volontaire
         with open(RESPOS_POLES_FILE, 'rb') as f:

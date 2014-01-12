@@ -9,7 +9,7 @@ import yaml
 from flask import Flask
 
 from models import db
-from login import login_manager, inject_roles
+import login
 import views
 from lib import upload, filters, mail
 
@@ -46,8 +46,7 @@ def create_app():
     # init flask extensions
     db.init_app(app)
     mail.init_app(app)
-    login_manager.init_app(app)
-    app.context_processor(inject_roles)
+    login.init_app(app)
 
     # init my modules
     upload.init_app(app)
