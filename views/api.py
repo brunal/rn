@@ -23,10 +23,10 @@ def send_registration_email(user):
 
 @bp.route('register', methods=['POST'])
 def register():
-    user = jsonify({'response': try_register(request.form)})
+    user = try_register(request.form)
     if user:
         send_registration_email(user)
-    return bool(user)
+    return jsonify({'response': bool(user)})
 
 
 def try_register(data):
