@@ -9,7 +9,7 @@ from wtforms import StringField, PasswordField, RadioField, DateTimeField, \
                     SelectMultipleField, SelectField, TextAreaField, \
                     IntegerField, validators, widgets
 
-from models import SexeActivite, Sweat, Disponibilite
+from models import Sexe, SexeActivite, Sweat, Disponibilite
 
 
 def mk_req(nom):
@@ -29,6 +29,9 @@ class MultiCheckboxField(SelectMultipleField):
 
 
 class Profil(Form):
+    sexe = RadioField('sexe',
+                      choices=[(s.value, s.name) for s in Sexe],
+                      coerce=int)
     sweat = RadioField('sweat',
                       choices=[(s.value, s.name) for s in Sweat],
                       coerce=int,

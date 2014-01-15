@@ -59,6 +59,7 @@ def profil():
         if form.validate():
             # update user object
             volontaire.sweat = form.sweat.data
+            volontaire.user.sexe = form.sexe.data
 
             map(models.db.session.delete, volontaire.disponibilites)
             dispos = []
