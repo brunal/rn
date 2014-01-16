@@ -4,8 +4,9 @@
 Glues everything together and launches the app
 """
 import os
-import yaml
+import locale
 
+import yaml
 from flask import Flask
 
 from models import db
@@ -42,6 +43,8 @@ def create_app():
 
     app.debug = app.config['DEBUG']
     app.secret_key = app.config['SECRET_KEY']
+
+    locale.setlocale(locale.LC_TIME, '')
 
     # init flask extensions
     db.init_app(app)

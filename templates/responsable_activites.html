@@ -5,7 +5,7 @@
     Les activités que tu as configurées sont les suivantes :
     {% for activite in activites %}
     <li><a href="{{ url_for('views.responsable.activite_get', a_id=activite.id) }}">{{ activite.nom }}</a>
-    le {{ activite.debut.date() }} de {{ activite.debut.time() }} à {{ activite.fin.time() }} à {{ activite.lieu }}
+    le {{ activite.debut|date }} de {{ activite.debut|time }} à {{ activite.fin|time }} à {{ activite.lieu }}
     </li>
     {% endfor %}
     <li><a href="{{ url_for('views.responsable.activite_get') }}">Ajouter une activité</a></li>

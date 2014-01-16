@@ -5,7 +5,7 @@ def init_app(app):
 
 
 def to_date(dt):
-    return dt.strftime("%d")
+    return dt.strftime("%A (%d)")
 
 
 def to_time(dt):
