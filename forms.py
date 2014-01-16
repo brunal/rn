@@ -18,24 +18,6 @@ def mk_req(nom):
 
 # Utilisateurs
 
-class Registration(Form):
-
-    email = StringField('email', validators=mk_req('email'))
-    password = PasswordField('mot de passe',
-                             validators=[validators.Required(message=u'Mot de passe obligatoire'),
-                                         validators.Length(min=5, message=u'Minimum %(min)d caractères')])
-    password2 = PasswordField(u'répéter le mot de passe',
-                              validators=[validators.EqualTo(fieldname='password',
-                                                             message=u'Les deux mots de passe doivent être égaux')])
-    name = StringField('nom', validators=mk_req('nom'))
-    sexe = RadioField('sexe',
-                      choices=[(s.value, s.name) for s in Sexe],
-                      coerce=int,
-                      validators=mk_req('sexe'))
-    ecole = StringField(u'école', validators=mk_req(u'école'))
-    portable = StringField('portable', validators=mk_req('portable'))
-
-
 class Login(Form):
     email = StringField('email', validators=mk_req('email'))
     password = PasswordField('mdp', validators=mk_req('mdp'))
@@ -47,6 +29,9 @@ class MultiCheckboxField(SelectMultipleField):
 
 
 class Profil(Form):
+    sexe = RadioField('sexe',
+                      choices=[(s.value, s.name) for s in Sexe],
+                      coerce=int)
     sweat = RadioField('sweat',
                       choices=[(s.value, s.name) for s in Sweat],
                       coerce=int,

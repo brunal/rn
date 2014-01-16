@@ -4,16 +4,10 @@ Basic views: profile, register, login and logout from the URL to the rendered te
 """
 from flask import Blueprint, render_template, url_for, redirect, request, flash
 from flask.ext.login import login_user, logout_user, login_required, current_user
-from flask_mail import Message
 
 import forms
 import models
 import login
-from lib import mail
-
-
-class config(object):
-    REGISTRATION_EMAIL_TEMPLATE = None
 
 
 login.login_manager.login_view = 'views.basic.login_page'
@@ -50,36 +44,6 @@ def logout():
     return redirect(url_for('.login_page'))
 
 
-@bp.route('register', methods=['GET', 'POST'])
-def register():
-    form = forms.Registration(request.form)
-    if form.validate_on_submit():
-        password = login.hash_password(form.password.data)
-        user = models.User(form.email.data,
-                password,
-                form.name.data,
-                form.sexe.data,
-                form.ecole.data,
-                form.portable.data)
-
-        volontaire = models.Volontaire(user)
-        models.db.session.add(volontaire)
-        models.db.session.commit()
-
-        user_for_login = login.User(user)
-        login_user(user_for_login)
-
-        msg = Message('Inscription volontaire RN réussie', recipients=[user.email])
-        msg.body = config.REGISTRATION_EMAIL_TEMPLATE.format(nom=user.name,
-                            profil=url_for('.profil', _external=True),
-                            index=url_for('.index', _external=True))
-        mail.send(msg)
-
-        return redirect(url_for('.profil'))
-
-    return render_template('register.html', form=form)
-
-
 @bp.route('profil', methods=['GET', 'POST'])
 @login_required
 def profil():
@@ -95,6 +59,7 @@ def profil():
         if form.validate():
             # update user object
             volontaire.sweat = form.sweat.data
+            volontaire.user.sexe = form.sexe.data
 
             map(models.db.session.delete, volontaire.disponibilites)
             dispos = []
