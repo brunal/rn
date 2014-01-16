@@ -87,7 +87,7 @@ def upload_page(a_id):
         flash(u'Succès : {}'.format(', '.join(successes)))
     if failures:
         flash(u'Echecs : {}'.format(', '.join(failures)))
-    return redirect(url_for('.activite_get'), a_id=activite.id)
+    return redirect(url_for('.activite_get', a_id=activite.id))
 
 
 @bp.route('<int:a_id>/delete/')
