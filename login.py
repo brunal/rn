@@ -55,6 +55,14 @@ def authentify(email, password):
     return User(resp)
 
 
+def change_password(email, old_pwd, new_pwd):
+    user = authentify(email, old_pwd)
+    if user is not None:
+        user.password = new_pwd
+        models.db.session.commit()
+    return user is not None
+
+
 @login_manager.user_loader
 def load_user(id):
     logging.debug("Trying to log user with id %s", id)

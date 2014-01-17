@@ -5,6 +5,7 @@ from flask import Blueprint, jsonify, request, url_for
 from flask_mail import Message
 
 from models import User, Responsable, Volontaire, db
+from login import change_password
 from lib import mail
 
 RESPOS_POLES_FILE = None
@@ -19,6 +20,20 @@ def send_registration_email(user):
                         profil=url_for('views.basic.profil', _external=True),
                         index=url_for('views.basic.index', _external=True))
     mail.send(msg)
+
+
+@bp.route('change-password', methods=['POST'])
+def changepassword():
+    try:
+        email = request.form['email']
+        old_pwd = request.form['old_password']
+        new_pwd = request.form['new_password']
+        result = change_password(email, old_pwd, new_pwd)
+    except:
+        logging.exception("Cannot change password with information %s", request.form)
+        result = 'exception'
+
+    return jsonify({'response': result})
 
 
 @bp.route('register', methods=['POST'])
