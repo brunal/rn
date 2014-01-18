@@ -1,44 +1,17 @@
-{% extends "base.html" %}
-{% block body %}
-<h2>
+{% extends "list_activites.html" %}
+
+{% block activites_title %}
     {% if volontaire %}
     Tes activités de la RN
     {% else %}
     Activités de la RN ayant besoin de volontaires
     {% endif %}
-</h2>
-
-<table class="table">
-    <thead>
-        <tr>
-            <th>Jour</th>
-            <th>Début</th>
-            <th>Fin</th>
-            <th>Nom</th>
-            <th>Lieu</th>
-            <th>Responsable</th>
-        </tr>
-    </thead>
-
-    <tbody>
-        {% for a in activites %}
-        <tr>
-            <td>{{ a.debut|date }}</td>
-            <td>{{ a.debut|time }}</td>
-            <td>{{ a.fin|time }}</td>
-            <td><a href="{{ url_for('views.activite.activite', activite_id=a.id) }}">
-                {{ a.nom }}
-            </td></a>
-            <td>{{ a.lieu }}</td>
-            <td><a href="mailto:{{ a.responsable.user.email }}">
-                {{ a.responsable.user.name }}
-            </a></td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
-
-<p><a href="{{ url_for('views.activite.csv_activites') }}">Télécharger en tableur</a></p>
-
-Une activité sera attribuée <em>automatiquement</em> à chaque volontaire.
 {% endblock %}
+
+{% block url_activite %}
+{{ url_for('views.activite.activite', activite_id=a.id) }}
+{% endblock %}
+
+{% block url_csv %}
+{{ url_for('views.activite.csv_activites') }}
+{% endblock url_csv %}

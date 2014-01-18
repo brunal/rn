@@ -1,6 +1,10 @@
 {% from "_formhelpers.html" import render_simple_form %}
 {% extends "base.html" %}
 {% block body %}
+    {% if a_id %}
+    <p><a href="{{ url_for('views.activite.activite', activite_id=a_id) }}">Visualiser la ficher</a></p>
+    {% endif %}
+
     {% if form %}
         {{ render_simple_form(form) }}
     {% endif %}

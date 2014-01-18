@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block body %}
+<h2>
+    {% block activites_title %}{% endblock %}
+</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            {% block thead_main %}
+            <th>Jour</th>
+            <th>Début</th>
+            <th>Fin</th>
+            <th>Nom</th>
+            <th>Lieu</th>
+            {% endblock thead_main %}{% block thead_extra %}
+            <th>Responsable</th>
+            {% endblock thead_extra %}
+        </tr>
+    </thead>
+
+    <tbody>
+        {% for a in activites %}
+        <tr>
+            {% block tbody_main scoped %}
+            <td>{{ a.debut|date }}</td>
+            <td>{{ a.debut|time }}</td>
+            <td>{{ a.fin|time }}</td>
+            <td><a href="{% block url_activite %}{% endblock %}">
+                {{ a.nom }}
+            </td></a>
+            <td>{{ a.lieu }}</td>
+            {% endblock %}{% block tbody_extra scoped %}
+            <td><a href="mailto:{{ a.responsable.user.email }}">
+                {{ a.responsable.user.name }}
+            </a></td>
+            {% endblock %}
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<p><a href="{% block url_csv %}{% endblock %}">Télécharger en tableur</a></p>
+
+{% block bonus_bottom %}
+{% endblock %}
+
+<p>Une activité sera attribuée <em>automatiquement</em> à chaque volontaire.</p>
+{% endblock %}
+

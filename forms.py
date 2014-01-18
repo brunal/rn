@@ -54,15 +54,15 @@ def time_or_none(t):
 
 
 class Activite(Form):
+    nom = StringField(u'nom de l\'activité', validators=mk_req('nom'))
     jour = SelectField('jour', coerce=int,
                        choices=[(0, 'jeudi'), (1, 'vendredi'),
                                 (2, 'samedi'), (3, 'dimanche'), (4, 'lundi')])
-    debut = DateTimeField(u'heure de début (HH:MM)', validators=mk_req(u'début'),
+    debut = DateTimeField(u'début (HH:MM)', validators=mk_req(u'début'),
                           format='%H:%M', filters=(time_or_none,))
-    fin = DateTimeField('heure de fin (HH:MM)', validators=mk_req(u'fin'),
+    fin = DateTimeField('fin (HH:MM)', validators=mk_req(u'fin'),
                         format='%H:%M', filters=(time_or_none,))
 
-    nom = StringField(u'nom de l\'activité', validators=mk_req('nom'))
     description = TextAreaField(u'description de l\'activité', validators=mk_req('description'))
     lieu = StringField('lieu', validators=mk_req('lieu'))
     nombre_volontaires = IntegerField(u'nombre de volontaires demandé')
