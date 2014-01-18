@@ -5,6 +5,7 @@ Glues everything together and launches the app
 """
 import os
 import locale
+import codecs
 
 import yaml
 from flask import Flask
@@ -29,7 +30,7 @@ def load_config(app):
     for f in os.listdir(templates):
         name = os.path.splitext(f)[0].upper()
         # load template content in config
-        with open(os.path.join(templates, f), 'rb') as f_handle:
+        with codecs.open(os.path.join(templates, f), 'rb', 'utf8') as f_handle:
             config_mails[name] = f_handle.read()
     config['MAIL'] = config_mails
 
