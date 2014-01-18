@@ -1,15 +1,20 @@
-{% extends "base.html" %}
-{% block body %}
+{% extends "list_activites.html" %}
 
-<ul>
-    Les activités que tu as configurées sont les suivantes :
-    {% for activite in activites %}
-    <li><a href="{{ url_for('views.responsable.activite_get', a_id=activite.id) }}">{{ activite.nom }}</a>
-    le {{ activite.debut|date }} de {{ activite.debut|time }} à {{ activite.fin|time }} à {{ activite.lieu }}
-    </li>
-    {% endfor %}
-    <li><a href="{{ url_for('views.responsable.activite_get') }}">Ajouter une activité</a></li>
-</ul>
+{% block activites_title %}
+Activités que tu as configurées
+{% endblock %}
 
-Une activité sera attribuée <em>automatiquement</em> à chaque volontaire.
+{% block thead_extra %}{% endblock %}
+{% block tbody_extra %}{% endblock %}
+
+{% block url_activite %}
+{{ url_for('views.responsable.activite_get', a_id=a.id) }}
+{% endblock %}
+
+{% block bonus_bottom %}
+<p><a href="{{ url_for('views.responsable.activite_get') }}">Ajouter une activité</a></p>
+{% endblock %}
+
+{% block url_csv %}
+{{ url_for('views.responsable.csv_activites') }}
 {% endblock %}

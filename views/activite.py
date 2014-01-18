@@ -2,15 +2,13 @@
 """
 Vues d'activités pour ceux qui n'en sont pas responsable
 """
-from cStringIO import StringIO
-
 from flask import Blueprint, Response, send_from_directory, abort, render_template
 from flask.ext.login import login_required, current_user
 from werkzeug import secure_filename
 
 from models import Activite
-from lib import upload, ucsv
-from lib.filters import to_date, to_time
+from domain.activites import to_csv
+from lib import upload
 
 
 bp = Blueprint(__name__, __name__, url_prefix='/activite/')
@@ -37,17 +35,9 @@ def list_activites():
 @login_required
 def csv_activites():
     acts = activites()
-    csv_activites = StringIO()
-    w = ucsv.writer(csv_activites)
-    # headers
-    w.writerow(['Jour', u'Début', 'Fin', 'Nom', 'Lieu', 'Responsable', 'Email'])
-    for a in acts:
-        w.writerow([to_date(a.debut), to_time(a.debut), to_time(a.fin),
-                    a.nom, a.lieu,
-                    a.responsable.user.name, a.responsable.user.email])
-
-    return Response(csv_activites.getvalue(), content_type="text/csv; charset=utf-8",
-                    headers={"Content-Disposition": "attachment;filename=planning.csv"})
+    csv = to_csv(acts)
+    return Response(csv, content_type="text/csv; charset=utf-8",
+                    headers={"Content-Disposition": "attachment;filename=activites.csv"})
 
 
 def can_view_activite(user, id):

@@ -4,11 +4,12 @@ Vues pour les responsables : gestion d'un pôle
 """
 from datetime import datetime, timedelta
 
-from flask import Blueprint, render_template, redirect, url_for, request, flash, abort
+from flask import Blueprint, Response, render_template, redirect, url_for, request, flash, abort
 from flask.ext.login import current_user
 
 import forms
 import models
+from domain.activites import to_csv
 from login import requires_roles
 from lib import upload
 
@@ -23,6 +24,14 @@ def get_activite(id):
     if activite.responsable != current_user.user.role:
         abort(401)
     return activite
+
+
+@bp.route('csv')
+@requires_roles(models.Responsable)
+def csv_activites():
+    csv = to_csv(current_user.user.role.activites)
+    return Response(csv, content_type="text/csv; charset=utf-8",
+                    headers={"Content-Disposition": "attachment;filename=mes_activites.csv"})
 
 
 @bp.route('')
