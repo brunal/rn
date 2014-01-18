@@ -2,6 +2,11 @@
 {% extends "base.html" %}
 {% block body %}
 <h2>{{ activite.nom }}</h2>
+
+{% if activite.responsable == current_user.user.role %}
+<p><a href="{{ url_for('views.responsable.activite_get', a_id=activite.id) }}">Editer l'activité</a></p>
+{% endif %}
+
 <dl>
     <dt>Jour</dt> <dd>{{ activite.debut.date() }}</dd>
     <dt>Début</dt> <dd>{{ activite.debut.time() }}</dd>
