@@ -57,8 +57,10 @@ def profil():
 
     def update_profile_form(form):
         """Remove fields and update others"""
-        if not volontaire:
-            del form.disponibilites
+        if not volontaire or user.sexe != -1:
+            del form.sexe
+            if not volontaire:
+                del form.disponibilites
         form.sweat.choices = [(s, s) for s in user.available_sweats()]
 
     if request.method == 'POST':
@@ -72,7 +74,9 @@ def profil():
 
             # if volontaire then other fields must be updated
             if volontaire:
-                volontaire.user.sexe = form.sexe.data
+                if user.sexe == -1:
+                    user.sexe = form.sexe.data
+                    update_profile_form(form)
 
                 # careful with many-to-many disponibiles relationship
                 map(models.db.session.delete, volontaire.disponibilites)
