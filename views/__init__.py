@@ -7,7 +7,14 @@ import api  # registration API
 all_blueprints = [bp_basic, bp_responsable, bp_activite, bp_basic, api.bp]
 
 
+def set_from_file(path):
+    with open(path, 'rb') as f:
+        return set(f.read().splitlines())
+
+
 def init_app(app):
     """Central initialization function for view modules"""
     api.REGISTRATION_EMAIL_TEMPLATE = app.config['MAIL']['REGISTRATION']
-    api.RESPOS_POLES_FILE = app.config['RESPOS_POLES_FILE']
+
+    api.RESPOS_POLES = set_from_file(app.config['RESPOS_POLES_FILE'])
+    api.BRNS = set_from_file(app.config['BRN_FILE'])

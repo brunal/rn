@@ -4,11 +4,12 @@ import logging
 from flask import Blueprint, jsonify, request, url_for
 from flask_mail import Message
 
-from models import User, Responsable, Volontaire, db
+from models import User, BRN, Responsable, Volontaire, db
 from login import change_password
 from lib import mail
 
-RESPOS_POLES_FILE = None
+RESPOS_POLES = None
+BRNS = None
 REGISTRATION_EMAIL_TEMPLATE = None
 
 bp = Blueprint(__name__, __name__, url_prefix='/api/')
@@ -50,12 +51,13 @@ def try_register(data):
         password = data['password']
         user = User(email, password, data['name'], -1, data['ecole'], data['portable'])
 
-        Role = Volontaire
-        with open(RESPOS_POLES_FILE, 'rb') as f:
-            if email == f.readline():
-                Role = Responsable
+        if email in RESPOS_POLES:
+            role = Responsable(user)
+        elif email in BRNS:
+            role = BRN(user)
+        else:
+            role = Volontaire
 
-        role = Role(user)
         db.session.add(role)
         db.session.commit()
 
