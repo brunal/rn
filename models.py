@@ -2,10 +2,18 @@
 """
 Models and database options
 """
+import logging
+
 from enum import Enum
 from flask.ext.sqlalchemy import SQLAlchemy
+from sqlalchemy import func
 
 db = SQLAlchemy()
+
+
+def init_app(app):
+    db.init_app(app)
+    SweatShop.init_app(app)
 
 
 class Sexe(Enum):
@@ -19,13 +27,54 @@ class SexeActivite(Enum):
     F = 2
 
 
-class Sweat(Enum):
-    XS = 1
-    S = 2
-    M = 3
-    L = 4
-    XL = 5
-    XXL = 6
+class SweatShop(object):
+    """Manage sweatshirts stocks for volontaires only"""
+    shared_state = None
+
+    def __init__(self):
+        if self.shared_state:
+            self.__dict__ = self.shared_state
+        else:
+            self.__class__.shared_state = self.__dict__
+            self.stocks = self.compute_stocks()
+
+    @classmethod
+    def init_app(cls, app):
+        # retrive initial stocks through the configuration
+        cls.init_stocks = app.config['SWEATS']
+
+    def compute_stocks(self):
+        # retrieve user choices from the DB
+        query = db.session.query(User.sweat, func.count(User.id)).group_by(User.sweat).join(Volontaire)
+        result = dict(query)
+        stocks = dict(self.init_stocks)  # copy inital stocks
+        for size, taken in result.items():
+            if size is None:
+                continue
+
+            stocks[size] -= taken
+            if stocks[size] < 0:
+                logging.warning("Problem with sweats %s: %s left",
+                                size, stocks[size])
+        return stocks
+
+    def try_get(self, size, user):
+        if user.volontaire:
+            # need to check for availability
+            if self.stocks[size] <= 0:
+                return False
+            # there's some left
+            self.stocks[size] -= 1
+            if user.sweat is not None:
+                self.stocks[user.sweat] += 1
+        user.sweat = size
+        return True
+
+    def available(self, user):
+        if user.volontaire:
+            return self.stocks.keys()
+        else:
+            return [s for s, count in self.stocks.items() if count > 0]
 
 
 class Disponibilite(Enum):
@@ -55,6 +104,7 @@ class User(db.Model):
     name = db.Column(db.String)
 
     _sexe = db.Column(db.Integer)
+    sweat = db.Column(db.String)
     ecole = db.Column(db.String)
     portable = db.Column(db.String)
 
@@ -75,11 +125,18 @@ class User(db.Model):
     def show_sexe(self):
         return self.get_sexe().name
 
+    def try_get_sweat(self, sweat):
+        return SweatShop().try_get(sweat, self)
+
+    def available_sweats(self):
+        return SweatShop().available(self)
+
     def __init__(self, email, password, name, sexe, ecole, portable):
         self.email = email
         self.password = password
         self.name = name
         self.sexe = sexe
+        self.sweat = None
         self.ecole = ecole
         self.portable = portable
 
@@ -99,11 +156,9 @@ class Volontaire(db.Model):
     user = db.relationship('User', backref=db.backref('volontaire', uselist=False))
 
     id = db.Column(db.Integer, primary_key=True)
-    sweat = db.Column(db.Integer)
 
-    def __init__(self, user, sweat=None):
+    def __init__(self, user):
         self.user = user
-        self.sweat = sweat
 
     def is_affected_to(self, a_id):
         return Affectation.query.filter((Affectation.activite_id == a_id) &

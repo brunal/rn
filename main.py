@@ -10,7 +10,7 @@ import codecs
 import yaml
 from flask import Flask
 
-from models import db
+import models
 import login
 import views
 from lib import upload, filters, mail
@@ -48,11 +48,11 @@ def create_app():
     locale.setlocale(locale.LC_TIME, '')
 
     # init flask extensions
-    db.init_app(app)
     mail.init_app(app)
     login.init_app(app)
 
     # init my modules
+    models.init_app(app)
     upload.init_app(app)
     filters.init_app(app)
     views.init_app(app)

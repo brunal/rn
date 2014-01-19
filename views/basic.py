@@ -47,35 +47,56 @@ def logout():
 @bp.route('profil', methods=['GET', 'POST'])
 @login_required
 def profil():
-    if login.get_current_user_role() is not models.Volontaire:
-        # on affiche juste les informations
-        return render_template('profil.html', user=current_user.user)
+    """profil view
 
-    # Du travail supplémentaire est requis au niveau des disponibilites pour
-    # les faire marcher en many-to-many correctement (dommage)
-    volontaire = current_user.user.role
+    Common variables are set once for all. Some fields can be disabled
+    depending on the user state. See `forms.Profil`.
+    """
+    user = current_user.user
+    volontaire = user.volontaire
+
+    def update_profile_form(form):
+        """Remove fields and update others"""
+        if not volontaire:
+            del form.disponibilites
+        form.sweat.choices = [(s, s) for s in user.available_sweats()]
+
     if request.method == 'POST':
         form = forms.Profil(request.form)
+        update_profile_form(form)
         if form.validate():
-            # update user object
-            volontaire.sweat = form.sweat.data
-            volontaire.user.sexe = form.sexe.data
+            # check for sweat shirt
+            # setting the choices should prevent this from failing
+            if not user.try_get_sweat(form.sweat.data):
+                flash(u'Cette taille n\'est plus disponible')
 
-            map(models.db.session.delete, volontaire.disponibilites)
-            dispos = []
-            for i in form.disponibilites.data:
-                dispo = models.Disponibilites(volontaire=volontaire, quand=i)
-                models.db.session.add(dispo)
-                dispos.append(dispo)
-            volontaire.disponibilites = dispos
+            # if volontaire then other fields must be updated
+            if volontaire:
+                volontaire.user.sexe = form.sexe.data
+
+                # careful with many-to-many disponibiles relationship
+                map(models.db.session.delete, volontaire.disponibilites)
+                dispos = []
+                for i in form.disponibilites.data:
+                    dispo = models.Disponibilites(volontaire=volontaire, quand=i)
+                    models.db.session.add(dispo)
+                    dispos.append(dispo)
+                volontaire.disponibilites = dispos
 
             models.db.session.commit()
 
             flash(u'Infos bien mises à jour !')
     else:
-        dispos_int = [d.quand for d in volontaire.disponibilites]
-        form = forms.Profil(sweat=volontaire.sweat, disponibilites=dispos_int)
+        data = {}
+        # prepare data bount to fields
+        if user.sweat is not None:
+            data['sweat'] = user.sweat
+        if volontaire:
+            data['disponibilites'] = [d.quand for d in volontaire.disponibilites]
+
+        form = forms.Profil(**data)
+        update_profile_form(form)
 
     return render_template('profil.html',
                            form=form,
-                           user=current_user.user)
+                           user=user)

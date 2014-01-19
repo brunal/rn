@@ -9,8 +9,10 @@ Tu es inscrit en tant que {% if volontaire %}volontaire{% elif responsable %}res
         {{ form.hidden_tag() }}
         <dl class="dl-horizontal">
         {{ render_field(form.sweat) }}
-        <p>Si tu es disponible pendant ces demi-journées et que tu es prêt à apporter ton aide, coche les cases que tu veux.</p>
-        {{ render_field(form.disponibilites) }}
+        {% if form.disponibilites %}
+            <p>Si tu es disponible pendant ces demi-journées et que tu es prêt à apporter ton aide, coche les cases que tu veux.</p>
+            {{ render_field(form.disponibilites) }}
+        {% endif %}
         {% if user.sexe == -1 %}
             {{ render_field(form.sexe) }}
         {% endif %}

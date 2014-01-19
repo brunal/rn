@@ -16,3 +16,8 @@ MAIL_USE_SSL: True
 MAIL_DEFAULT_SENDER: 'an@ddress.email'
 MAIL_USERNAME: 'vladivostok'
 MAIL_PASSWORD: 'rococo'
+SWEATS:
+    XS: 77
+    S: 12
+    M: 144000
+    L: 72

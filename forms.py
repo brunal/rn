@@ -9,7 +9,7 @@ from wtforms import StringField, PasswordField, RadioField, DateTimeField, \
                     SelectMultipleField, SelectField, TextAreaField, \
                     IntegerField, validators, widgets
 
-from models import Sexe, SexeActivite, Sweat, Disponibilite
+from models import Sexe, SexeActivite, Disponibilite
 
 
 def mk_req(nom):
@@ -29,12 +29,18 @@ class MultiCheckboxField(SelectMultipleField):
 
 
 class Profil(Form):
+    """Profile page form
+
+    `sexe` will only be rendered if user is a Volontaire and has not sexe `sexe`
+    `disponibilites` will only be rendered if user is a Volontaire
+    This is done if `views.basic.profil`
+    """
     sexe = RadioField('sexe',
                       choices=[(s.value, s.name) for s in Sexe],
                       coerce=int)
     sweat = RadioField('sweat',
-                      choices=[(s.value, s.name) for s in Sweat],
-                      coerce=int,
+                      choices=[],
+                      coerce=str,
                       validators=mk_req('sweat'))
     disponibilites = MultiCheckboxField(u'disponibilités supplémentaires',
                       choices=[(s.value, s) for s in Disponibilite],
