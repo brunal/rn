@@ -56,7 +56,7 @@ def try_register(data):
         elif email in BRNS:
             role = BRN(user)
         else:
-            role = Volontaire
+            role = Volontaire(user)
 
         db.session.add(role)
         db.session.commit()
