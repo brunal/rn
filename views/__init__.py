@@ -4,7 +4,7 @@ from activite import bp as bp_activite  # activities for non-manager
 from brn import bp as bp_brn  # supervision for BRN members
 import api  # registration API
 
-all_blueprints = [bp_basic, bp_responsable, bp_activite, bp_basic, api.bp]
+all_blueprints = [bp_basic, bp_responsable, bp_brn, bp_activite, bp_basic, api.bp]
 
 
 def set_from_file(path):
