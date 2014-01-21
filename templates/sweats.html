@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% block body %}
+
+<h2>Tailles de sweat</h2
+<h3>Volontaires</h3>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Taille</th>
+            <th>Commandes</th>
+        </tr>
+    </thead>
+
+    <tbody>
+    {% for t, c in vols.items() %}
+        <tr>
+            <td>{{ t }}</td>
+            <td>{{ c }}</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Nom</th>
+            <th>Taille</th>
+        </tr>
+    </thead>
+
+    <tbody>
+    {% for n, t in detail_vols.items() %}
+        <tr>
+            <td>{{ n }}</td>
+            <td>{{ t }}</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+
+<h3>Responsables & BRN</h3>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Taille</th>
+            <th>Commandes</th>
+        </tr>
+    </thead>
+
+    <tbody>
+    {% for t, c in nolimit.items() %}
+        <tr>
+            <td>{{ t }}</td>
+            <td>{{ c }}</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Nom</th>
+            <th>Taille</th>
+        </tr>
+    </thead>
+
+    <tbody>
+    {% for n, t in detail_nolimit.items() %}
+        <tr>
+            <td>{{ n }}</td>
+            <td>{{ t }}</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}

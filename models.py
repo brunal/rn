@@ -43,9 +43,24 @@ class SweatShop(object):
         # retrive initial stocks through the configuration
         cls.init_stocks = app.config['SWEATS']
 
+    def _summary_orders(self):
+        return db.session.query(User.sweat, func.count(User.id)).group_by(User.sweat)
+
+    def summary_orders(self):
+        so = lambda m: list(self._summary_orders().join(m))
+        return dict(so(Volontaire)), dict(so(Responsable) + so(BRN))
+
+    def all_orders(self):
+        role_to_element = lambda r: (r.user.name, r.user.sweat)
+        model_to_elements = lambda m: dict(map(role_to_element, m.query.all()))
+
+        vols, respos, brns = map(model_to_elements, [Volontaire, Responsable, BRN])
+        respos.update(brns)
+        return vols, respos
+
     def compute_stocks(self):
         # retrieve user choices from the DB
-        query = db.session.query(User.sweat, func.count(User.id)).group_by(User.sweat).join(Volontaire)
+        query = self._summary_orders().join(Volontaire)
         result = dict(query)
         stocks = dict(self.init_stocks)  # copy inital stocks
         for size, taken in result.items():
