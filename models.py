@@ -3,6 +3,7 @@
 Models and database options
 """
 import logging
+from collections import Counter
 
 from enum import Enum
 from flask.ext.sqlalchemy import SQLAlchemy
@@ -47,8 +48,8 @@ class SweatShop(object):
         return db.session.query(User.sweat, func.count(User.id)).group_by(User.sweat)
 
     def summary_orders(self):
-        so = lambda m: list(self._summary_orders().join(m))
-        return dict(so(Volontaire)), dict(so(Responsable) + so(BRN))
+        so = lambda m: dict(self._summary_orders().join(m))
+        return so(Volontaire), dict(Counter(so(Responsable)) + Counter(so(BRN)))
 
     def all_orders(self):
         role_to_element = lambda r: (r.user.name, r.user.sweat)

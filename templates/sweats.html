@@ -14,7 +14,7 @@
     <tbody>
     {% for t, c in vols.items() %}
         <tr>
-            <td>{{ t }}</td>
+            <td>{{ t or '?' }}</td>
             <td>{{ c }}</td>
         </tr>
     {% endfor %}
@@ -33,7 +33,7 @@
     {% for n, t in detail_vols.items() %}
         <tr>
             <td>{{ n }}</td>
-            <td>{{ t }}</td>
+            <td>{{ t or '?' }}</td>
         </tr>
     {% endfor %}
     </tbody>
@@ -51,7 +51,7 @@
     <tbody>
     {% for t, c in nolimit.items() %}
         <tr>
-            <td>{{ t }}</td>
+            <td>{{ t or '?' }}</td>
             <td>{{ c }}</td>
         </tr>
     {% endfor %}
@@ -70,10 +70,12 @@
     {% for n, t in detail_nolimit.items() %}
         <tr>
             <td>{{ n }}</td>
-            <td>{{ t }}</td>
+            <td>{{ t or '?' }}</td>
         </tr>
     {% endfor %}
     </tbody>
 </table>
+
+<p>Un <em>?</em> signale une absence de choix.</p>
 
 {% endblock %}
