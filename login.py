@@ -34,9 +34,8 @@ class User(UserMixin):
         try:
             id = int(uid)
             userm = models.User.query.get(id)
-        except Exception as e:
-            logging.debug("Cannot retrieve user from uid %s (type %s)", uid, type(uid))
-            logging.debug(e)
+        except:
+            logging.exception("Cannot retrieve user from uid %s (type %s)", uid, type(uid))
             return None
 
         obj = cls(userm)
