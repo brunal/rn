@@ -27,9 +27,3 @@ def sweats():
                            nolimit=nolimit,
                            detail_vols=detail_vols,
                            detail_nolimit=detail_nolimit)
-
-
-@bp.route('affectations')
-@requires_roles(models.BRN)
-def affectations():
-    pass
