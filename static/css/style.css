@@ -10,3 +10,13 @@ textarea {
     width: 100%;
     height: 6em;
 }
+
+ul.flashes {
+    color: blue;
+    font-weight: bold;
+}
+
+ul.errors {
+    color: red;
+    font-weight: bold;
+}
