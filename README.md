@@ -1,8 +1,8 @@
 Installation
 ============
-Dépendance : python2, sqlite3
+Dépendances externes : python2, sqlite3
 
-Dans un shell,
+Dans un shell, pour installer les bibliothèques requises, faire
 
 `pip install -r requirements.txt`
 
@@ -12,10 +12,7 @@ Il faut ensuite écrire le fichier `config.yml` en s'inspirant de `config.yml.ex
 Enfin, créer la base de données. Pour cela, dans l'interpréteur Python,
 
 ```python
-from app import create_app
-from models import db
-app = create_app()
-app.test_request_context().push()
+from tools import db
 db.create_all()
 ```
 
