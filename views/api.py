@@ -49,7 +49,7 @@ def try_register(data):
     try:
         email = data['email']
         password = data['password']
-        user = User(email, password, data['name'], -1, data['ecole'], data['portable'])
+        user = User(email, password, data['name'], data['ecole'], data['portable'])
 
         if email in RESPOS_POLES:
             role = Responsable(user)

@@ -17,7 +17,7 @@ def add_users():
     Create the DB & add 3 fake users
     """
     def make_u(r):
-        return User('%s@test' % r, login.hash_password(r), r, Sexe.M, '%s%s' % (r, r), '00 00 00 00 00')
+        return User('%s@test' % r, login.hash_password(r), r, '%s%s' % (r, r), '00 00 00 00 00')
 
     db.create_all()
 

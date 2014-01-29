@@ -134,7 +134,7 @@ class User(db.Model):
 
     @sexe.setter
     def sexe(self, s):
-        if isinstance(s, int):
+        if isinstance(s, int) or s is None:
             self._sexe = s
         else:
             self._sexe = s.value
@@ -151,11 +151,11 @@ class User(db.Model):
     def available_sweats(self):
         return SweatShop().available(self)
 
-    def __init__(self, email, password, name, sexe, ecole, portable):
+    def __init__(self, email, password, name, ecole, portable):
         self.email = email
         self.password = password
         self.name = name
-        self.sexe = sexe
+        self.sexe = None
         self.sweat = None
         self.ecole = ecole
         self.portable = portable

@@ -57,7 +57,7 @@ def profil():
 
     def update_profile_form(form):
         """Remove fields and update others"""
-        if not volontaire or user.sexe != -1:
+        if not volontaire or user.sexe is None:
             del form.sexe
             if not volontaire:
                 del form.disponibilites
@@ -74,7 +74,7 @@ def profil():
 
             # if volontaire then other fields must be updated
             if volontaire:
-                if user.sexe == -1:
+                if user.sexe is None:
                     user.sexe = form.sexe.data
                     update_profile_form(form)
 
