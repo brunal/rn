@@ -92,6 +92,10 @@ class SweatShop(object):
         else:
             return [s for s, count in self.stocks.items() if count > 0]
 
+    @property
+    def sizes(self):
+        return self.stocks.keys()
+
 
 class Disponibilite(Enum):
     JA = 1

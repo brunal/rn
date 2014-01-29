@@ -12,7 +12,7 @@
     </thead>
 
     <tbody>
-    {% for t, c in vols.items() %}
+    {% for t, c in vols %}
         <tr>
             <td>{{ t or '?' }}</td>
             <td>{{ c }}</td>
@@ -30,7 +30,7 @@
     </thead>
 
     <tbody>
-    {% for n, t in detail_vols.items() %}
+    {% for n, t in detail_vols %}
         <tr>
             <td>{{ n }}</td>
             <td>{{ t or '?' }}</td>
@@ -49,7 +49,7 @@
     </thead>
 
     <tbody>
-    {% for t, c in nolimit.items() %}
+    {% for t, c in nolimit %}
         <tr>
             <td>{{ t or '?' }}</td>
             <td>{{ c }}</td>
@@ -67,7 +67,7 @@
     </thead>
 
     <tbody>
-    {% for n, t in detail_nolimit.items() %}
+    {% for n, t in detail_nolimit %}
         <tr>
             <td>{{ n }}</td>
             <td>{{ t or '?' }}</td>
