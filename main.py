@@ -6,6 +6,7 @@ Glues everything together and launches the app
 import os
 import locale
 import codecs
+import logging
 
 import yaml
 from flask import Flask
@@ -45,7 +46,10 @@ def create_app():
     app.debug = app.config['DEBUG']
     app.secret_key = app.config['SECRET_KEY']
 
-    locale.setlocale(locale.LC_TIME, '')
+    try:
+        locale.setlocale(locale.LC_ALL, 'fr_FR.UTF-8')
+    except locale.Error:
+        logging.warning('Could not set locale')
 
     # init flask extensions
     mail.init_app(app)
