@@ -12,7 +12,7 @@ import forms
 from login import requires_roles
 from lib import mail
 from lib.filters import to_time
-from domain import algorithm
+from domain import algorithm, assignement
 
 
 bp = Blueprint(__name__, __name__, url_prefix='/affectations/')
@@ -22,22 +22,15 @@ bp = Blueprint(__name__, __name__, url_prefix='/affectations/')
 @requires_roles(models.BRN)
 def status():
     # misc. stats
-    activites = models.Activite.query.all()
-    vols = models.Volontaire.query.count()
-    slots = sum(a.nombre_volontaires for a in activites)
+    stats = assignement.Stats()
     assign_auto = models.Assignement.auto().count()
     assign_manual = models.Assignement.manual().count()
 
-    tot_help_time = sum((a.nombre_volontaires * (a.fin - a.debut) for a in activites), timedelta())
-
     return render_template('assignements/status.html',
-                           activites=len(activites),
-                           vols=vols,
-                           slots=slots,
+                           activites_count=models.Activite.query.count(),
+                           stats=stats,
                            assign_auto=assign_auto,
-                           assign_manual=assign_manual,
-                           avg_slot_length=tot_help_time / slots,
-                           avg_help_time=tot_help_time / vols)
+                           assign_manual=assign_manual)
 
 
 def warn_for_cancellation(assignement, unav):
@@ -131,11 +124,11 @@ def automatic():
     assign_manual = models.Assignement.manual().count()
     assign_auto = models.Assignement.auto().count()
 
-    if background_script:
-        # fetch output
+    try:
         with open(algorithm.OUT_FILE, 'rb') as f:
             content = f.read().decode('utf8')
-    else:
+    except IOError:
+        logging.exception("Cannot read file %s", algorithm.OUT_FILE)
         content = None
 
     return render_template('assignements/auto.html',

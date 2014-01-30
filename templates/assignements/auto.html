@@ -6,11 +6,8 @@
 <p>Il y a {{ assigned_auto }} affectations automatiques en base et {{ slots }} créneaux restant à remplir. Pour un peu plus de détail, voir la <a href="{{ url_for('views.assignements.status') }}">page récapitulative</a>.</p>
 
 {% if affectation_running %}
-<p>Il y a actuellement une procédure d'affectation en cours. Voici ce qu'elle dit.</p>
-<pre>{{ algo_output }}</pre>
-
+<p>Il y a actuellement une procédure d'affectation en cours.</p>
 {% else %}
-
 <p>Souhaites-tu :</p>
 <ul>
     <li><a href="{{ url_for('views.assignements.start_assigning') }}">
@@ -22,6 +19,13 @@
         (attention, c'est irréversible)
     </li>
 </ul>
+{% endif %}
+
+{% if algo_output %}
+{% if not affectation_running %}
+<p>Voici le résultat de la dernière procédure d'affectation (pour mémoire).</p>
+{% endif %}
+<pre>{{ algo_output }}</pre>
 {% endif %}
 
 {% endblock %}

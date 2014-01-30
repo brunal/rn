@@ -4,6 +4,7 @@ Models and database options
 """
 import logging
 from collections import Counter
+from datetime import timedelta
 
 from enum import Enum
 from flask.ext.sqlalchemy import SQLAlchemy
@@ -186,11 +187,15 @@ class Volontaire(db.Model):
 
     @classmethod
     def manually_assigned_to(cls, activite):
-        return [a.volontaire for a in Assignement.query.filter_by(activite_id=activite, source=2)]
+        return [a.volontaire for a in Assignement.query.filter_by(activite_id=activite, source=Assignement.MANUAL)]
 
     @property
     def activites(self):
         return [aff.activite for aff in self.assignements]
+
+    @property
+    def help_time(self):
+        return sum((a.fin - a.debut for a in self.activites), timedelta())
 
     @property
     def planning(self):
@@ -286,23 +291,38 @@ class Activite(db.Model, Evenement):
     def show_sexe(self):
         return self.get_sexe().name
 
+    @classmethod
+    def all(cls):
+        """Return all items sorted by beginning date"""
+        return cls.query.order_by(cls.debut)
+
+    @classmethod
+    def most_in_need_of_help(cls):
+        need_help = [a for a in cls.all()
+                     if len(a.assignees) < a.nombre_volontaires]
+        # sort by filling percentage + low need of help
+        return sorted(need_help, key=lambda a: (len(a.assignees) / a.nombre_volontaires, a.nombre_volontaires))
+
     @property
     def assignees(self):
         return [ass.volontaire for ass in self.assignements]
 
     def manual_assignements(self):
-        return Assignement.query.filter_by(activite_id=self.id, source=2)
+        return Assignement.query.filter_by(activite_id=self.id, source=Assignement.MANUAL)
 
     def get_available_volontaires(self):
+        # FIXME
         return sorted([v for v in Volontaire.query.all() if
-                       not self.overlaps_with(v.activites)],
+                       not self.overlaps_with(v.activites, _bool=True) and
+                       not any(self.conflicts(u.beginning, u.end, [self], _bool=True)
+                               for u in v.unavailabilities)],
                       key=lambda v: v.user.name)
 
-    def overlaps_with(self, activites):
-        return self.conflicts(self.debut, self.fin, activites)
+    def overlaps_with(self, activites, _bool=False):
+        return self.conflicts(self.debut, self.fin, activites, _bool)
 
     @classmethod
-    def conflicts(cls, beginning, end, activites):
+    def conflicts(cls, beginning, end, activites, _bool=False):
         """Checks whether a time span conflicts with `activites`
 
         Returns
@@ -313,11 +333,16 @@ class Activite(db.Model, Evenement):
         for a in activites:
             if a.debut <= beginning <= a.fin or \
                beginning <= a.debut <= end:
+                if _bool:  # I just want the answer!
+                    return True
                 conflicts.append(a)
         return conflicts
 
 
 class Assignement(db.Model):
+    AUTOMATIC = 1
+    MANUAL = 2
+
     id = db.Column(db.Integer, primary_key=True)
 
     volontaire_id = db.Column(db.Integer, db.ForeignKey('volontaire.id'))
@@ -331,15 +356,15 @@ class Assignement(db.Model):
 
     @property
     def is_manual(self):
-        return self.source == 2
+        return self.source == self.MANUAL
 
     @classmethod
     def auto(cls):
-        return cls.query.filter(cls.source == 1)
+        return cls.query.filter(cls.source == cls.AUTOMATIC)
 
     @classmethod
     def manual(cls):
-        return cls.query.filter(cls.source != 1)
+        return cls.query.filter(cls.source == cls.MANUAL)
 
 
 class Unavailability(db.Model):
