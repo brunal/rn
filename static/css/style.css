@@ -20,3 +20,7 @@ ul.errors {
     color: red;
     font-weight: bold;
 }
+
+.respect_nl {
+    white-space: pre-wrap;
+}
