@@ -42,6 +42,11 @@ def list_activites():
     return render_template('responsable_activites.html', activites=activites)
 
 
+def vols_choices_for(a_id):
+    # FIXME
+    return [(m.id, m.user.name) for m in models.Volontaire.query.all()]
+
+
 @bp.route('nouvelle/')
 @bp.route('<int:a_id>/')
 @requires_roles(models.Responsable, models.BRN)
@@ -54,9 +59,17 @@ def activite_get(a_id=None, form=None):
     form = form or forms.Activite(obj=activite)
     if activite.debut:
         form.jour.data = (activite.debut.date() - forms.JEUDI).days
+
+    assigned = [a.volontaire for a in activite.manual_assignements()]
+    assign = forms.ManualActiviteAssignement(people=[a.id
+                                                     for a in assigned])
+    assign.people.choices = vols_choices_for(a_id)
+
     return render_template('config_activite.html', form=form, a_id=activite.id,
                            files=upload.list_files(activite.id),
-                           extensions=upload.config.ALLOWED_EXTENSIONS)
+                           extensions=upload.config.ALLOWED_EXTENSIONS,
+                           assigned=assigned,
+                           assignements=assign)
 
 
 @bp.route('nouvelle/', methods=['POST'])
@@ -90,6 +103,31 @@ def activite_post(a_id=None):
     models.db.session.commit()
 
     return redirect(url_for('.activite_get', a_id=activite.id))
+
+
+@bp.route('<int:a_id>/assign', methods=['POST'])
+@requires_roles(models.Responsable, models.BRN)
+def assign(a_id):
+    assign = forms.ManualActiviteAssignement(request.form)
+    assign.people.choices = vols_choices_for(a_id)
+    if not assign.validate():
+        return activite_get()
+
+    # delete previous ones, add new ones
+    prev_assign = get_activite(a_id).manual_assignements()
+    map(models.db.session.delete, prev_assign)
+
+    # FIXME check constraints
+    for vid in assign.people.data:
+        a = models.Assignement()
+        a.activite_id = a_id
+        a.volontaire_id = vid
+        a.source = 2
+        models.db.session.add(a)
+    models.db.session.commit()
+
+    flash('Affectations bien prises en compte')
+    return redirect(url_for('.activite_get', a_id=a_id))
 
 
 @bp.route('<int:a_id>/upload', methods=['POST'])

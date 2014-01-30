@@ -181,12 +181,16 @@ class Volontaire(db.Model):
         self.user = user
 
     def is_affected_to(self, a_id):
-        return Affectation.query.filter((Affectation.activite_id == a_id) &
-                                        (Affectation.volontaire_id == self.id)).count() > 0
+        return Assignement.query.filter((Assignement.activite_id == a_id) &
+                                        (Assignement.volontaire_id == self.id)).count() > 0
+
+    @classmethod
+    def manually_assigned_to(cls, activite):
+        return [a.volontaire for a in Assignement.query.filter_by(activite_id=activite, source=2)]
 
     @property
     def activites(self):
-        return [aff.activite for aff in self.affectations]
+        return [aff.activite for aff in self.assignements]
 
     @property
     def planning(self):
@@ -282,15 +286,29 @@ class Activite(db.Model, Evenement):
     def show_sexe(self):
         return self.get_sexe().name
 
+    def manual_assignements(self):
+        return Assignement.query.filter_by(activite_id=self.id, source=2)
 
-class Affectation(db.Model):
+
+class Assignement(db.Model):
     id = db.Column(db.Integer, primary_key=True)
 
     volontaire_id = db.Column(db.Integer, db.ForeignKey('volontaire.id'))
-    volontaire = db.relationship('Volontaire', backref=db.backref('affectations'))
+    volontaire = db.relationship('Volontaire', backref=db.backref('assignements'))
 
     activite_id = db.Column(db.Integer, db.ForeignKey('activite.id'))
-    activite = db.relationship('Activite', backref=db.backref('affectations'))
+    activite = db.relationship('Activite', backref=db.backref('assignements'))
+
+    # 1 for automatic, 2 for manual
+    source = db.Column(db.Integer)
+
+    @classmethod
+    def auto(cls):
+        return cls.query.filter(cls.source == 1)
+
+    @classmethod
+    def manual(cls):
+        return cls.query.filter(cls.source != 1)
 
 
 class Planning(db.Model, Evenement):

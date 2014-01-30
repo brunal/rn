@@ -1,6 +1,7 @@
-{% from "_formhelpers.html" import render_simple_form %}
+{% from "_formhelpers.html" import render_simple_form, render_form %}
 {% extends "base.html" %}
 {% block body %}
+    <h2>Activité</h2>
     {% if a_id %}
     <p><a href="{{ url_for('views.activite.activite', activite_id=a_id) }}">Visualiser la ficher</a></p>
     {% endif %}
@@ -16,6 +17,7 @@
     {% endif %}
 
     {% if extensions %}
+    <h2>Documents</h2>
     <div>
         <p>Vous pouvez mettre en ligne des documents liés à votre activité. Les extensions autorisées sont
        {% for ext in extensions %}
@@ -42,6 +44,24 @@
             {% endfor %}
         </ul>
     </div>
+    {% endif %}
+
+    {% if assignements %}
+    <h2>Affectations manuelles</h2>
+
+    <p>Vous pouvez ici forcer l'affectation de volontaires à cette tâche. Seulement si vous avez une bonne raison</p>
+    {% if assigned %}
+    <ul>Les personnes affectées à la tâche sont les suivantes :
+        {% for ass in assigned %}
+        <li>{{ ass.user.name }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+
+    <form method="POST" action="{{ url_for('views.responsable.assign', a_id=a_id) }}">
+        {{ render_form(assignements) }}
+        <input type="submit"/>
+    </form>
     {% endif %}
 
 {% endblock %}

@@ -75,3 +75,7 @@ class Activite(Form):
     sexe = RadioField(u'préférence quant au sexe des volontaires',
                       choices=[(s.value, s.name) for s in SexeActivite],
                       coerce=int)
+
+
+class ManualActiviteAssignement(Form):
+    people = SelectMultipleField('Volontaires', coerce=int)
