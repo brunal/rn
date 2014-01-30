@@ -10,7 +10,7 @@ from flask.ext.login import current_user
 import forms
 import models
 from domain.activites import to_csv
-from login import requires_roles
+from login import requires_roles, get_current_user_role
 from lib import upload
 
 
@@ -21,7 +21,8 @@ bp = Blueprint(__name__, __name__, url_prefix='/responsable/')
 
 def get_activite(id):
     activite = models.Activite.query.get(id) or abort(404)
-    if activite.responsable != current_user.user.role:
+    if get_current_user_role() is not models.BRN and \
+       activite.responsable != current_user.user.role:
         abort(401)
     return activite
 
@@ -43,7 +44,7 @@ def list_activites():
 
 @bp.route('nouvelle/')
 @bp.route('<int:a_id>/')
-@requires_roles(models.Responsable)
+@requires_roles(models.Responsable, models.BRN)
 def activite_get(a_id=None, form=None):
     if a_id is None:
         form = form or forms.Activite()
@@ -60,13 +61,18 @@ def activite_get(a_id=None, form=None):
 
 @bp.route('nouvelle/', methods=['POST'])
 @bp.route('<int:a_id>/', methods=['POST'])
-@requires_roles(models.Responsable)
+@requires_roles(models.Responsable, models.BRN)
 def activite_post(a_id=None):
     form = forms.Activite(request.form)
     if not form.validate():
         return activite_get(a_id, form=form)
 
     if a_id is None:
+        if get_current_user_role() == models.BRN:
+            # cannot create new activity
+            flash(u'Il est impossible pour un membre du BRN de créer une activité')
+            redirect(url_for('views.activite.list_activites'))
+
         activite = models.Activite()
         activite.responsable = current_user.user.role
         models.db.session.add(activite)

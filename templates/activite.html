@@ -3,7 +3,7 @@
 {% block body %}
 <h2>{{ activite.nom }}</h2>
 
-{% if activite.responsable == current_user.user.role %}
+{% if brn or activite.responsable == current_user.user.role %}
 <p><a href="{{ url_for('views.responsable.activite_get', a_id=activite.id) }}">Editer l'activité</a></p>
 {% endif %}
 
