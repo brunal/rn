@@ -8,9 +8,9 @@
 {% endif %}
 
 <dl>
-    <dt>Jour</dt> <dd>{{ activite.debut.date() }}</dd>
-    <dt>Début</dt> <dd>{{ activite.debut.time() }}</dd>
-    <dt>Fin</dt> <dd>{{ activite.fin.time() }}</dd>
+    <dt>Jour</dt> <dd>{{ activite.debut|date }}</dd>
+    <dt>Début</dt> <dd>{{ activite.debut|time }}</dd>
+    <dt>Fin</dt> <dd>{{ activite.fin|time }}</dd>
     <dt>Nombre de volontaires demandé</dt> <dd> {{ activite.nombre_volontaires }}</dd>
     {% if activite.sexe %}
     <dt>Préférence de sexe des volontaires</dt> <dd>{{ activite.show_sexe() }}</dd>
