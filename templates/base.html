@@ -35,7 +35,6 @@
 
             {% if responsable %}
             <li><a href="{{ url_for('views.responsable.list_activites') }}">Mes activités</a></li>
-            <li><a href="{{ url_for('views.assignements.block_timespan') }}">Affectations manuelles</a></li>
 
             {% elif brn %}
             <li><a href="{{ url_for('views.brn.sweats') }}">Commande de sweats</a></li>
