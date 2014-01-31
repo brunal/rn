@@ -5,11 +5,12 @@ All forms are defined here
 from datetime import date
 
 from flask.ext.wtf import Form
+from wtforms.ext.sqlalchemy.fields import QuerySelectField
 from wtforms import StringField, PasswordField, RadioField, DateTimeField, \
                     SelectMultipleField, SelectField, TextAreaField, \
                     IntegerField, validators, widgets
 
-from models import Sexe, SexeActivite, Disponibilite
+from models import Volontaire, Sexe, SexeActivite, Disponibilite
 
 
 def mk_req(nom):
@@ -50,7 +51,7 @@ class Profil(Form):
 # Activités
 
 # début de la RN
-JEUDI = date(2014, 2, 1)
+JEUDI = date(2014, 2, 6)
 
 
 def time_or_none(t):
@@ -79,3 +80,17 @@ class Activite(Form):
 
 class ManualActiviteAssignement(Form):
     people = SelectMultipleField('Volontaires', coerce=int)
+
+
+class Unavailability(Form):
+    volontaire = QuerySelectField(query_factory=lambda: Volontaire.query.all(),
+                                  get_pk=lambda v: v.id,
+                                  get_label=lambda v: v.user.name)
+    reason = StringField('raison', validators=mk_req('raison'))
+
+    day = SelectField('jour', coerce=int,
+                      choices=[(2, 'samedi'), (3, 'dimanche')])
+    beginning = DateTimeField(u'début (HH:MM)', validators=mk_req(u'début'),
+                              format='%H:%M', filters=(time_or_none,))
+    end = DateTimeField('fin (HH:MM)', validators=mk_req('fin'),
+                        format='%H:%M', filters=(time_or_none,))

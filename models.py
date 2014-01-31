@@ -286,6 +286,9 @@ class Activite(db.Model, Evenement):
     def show_sexe(self):
         return self.get_sexe().name
 
+    def assignements(self):
+        return Assignement.query.filter_by(activite_id=self.id)
+
     def manual_assignements(self):
         return Assignement.query.filter_by(activite_id=self.id, source=2)
 
@@ -302,6 +305,10 @@ class Assignement(db.Model):
     # 1 for automatic, 2 for manual
     source = db.Column(db.Integer)
 
+    @property
+    def is_manual(self):
+        return self.source == 2
+
     @classmethod
     def auto(cls):
         return cls.query.filter(cls.source == 1)
@@ -309,6 +316,18 @@ class Assignement(db.Model):
     @classmethod
     def manual(cls):
         return cls.query.filter(cls.source != 1)
+
+
+class Unavailability(db.Model):
+    """Used for a Volontaire unavailable on a time span"""
+    id = db.Column(db.Integer, primary_key=True)
+
+    volontaire_id = db.Column(db.Integer, db.ForeignKey('volontaire.id'))
+    volontaire = db.relationship('Volontaire', backref=db.backref('unavailabilities'))
+
+    reason = db.Column(db.String)
+    beginning = db.Column(db.DateTime)
+    end = db.Column(db.DateTime)
 
 
 class Planning(db.Model, Evenement):
