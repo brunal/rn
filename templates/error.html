@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}Erreur{% endblock %}
+
+{% block body %}
+<h2>Erreur {{ error }} !</h2>
+<p>Un problème est survenu lors de la requête :
+{% if error == 404 %}
+la page n'a pas été trouvée.
+{% elif error == 403 %}
+tu n'as pas le droit d'accéder à cette page.
+{% elif error == 500 %}
+quelque chose s'est mal passé du côté du serveur.
+{% endif %}</p>
+
+<p>Désolé pour le dérangement.
+Si l'erreur se reproduit et te gène, envoie un email !</p>
+{% endblock %}
