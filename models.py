@@ -286,6 +286,9 @@ class Activite(db.Model, Evenement):
     def show_sexe(self):
         return self.get_sexe().name
 
+    def assignements(self):
+        return Assignement.query.filter_by(activite_id=self.id)
+
     def manual_assignements(self):
         return Assignement.query.filter_by(activite_id=self.id, source=2)
 
@@ -301,6 +304,10 @@ class Assignement(db.Model):
 
     # 1 for automatic, 2 for manual
     source = db.Column(db.Integer)
+
+    @property
+    def is_manual(self):
+        return self.source == 2
 
     @classmethod
     def auto(cls):
