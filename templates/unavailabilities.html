@@ -1,0 +1,48 @@
+{% from "_formhelpers.html" import render_simple_form, render_form %}
+{% extends "base.html" %}
+{% block body %}
+<h2>
+    Gestion des indisponibilités particulières
+</h2>
+<p>Tu peux ici voir, ajouter, modifier et supprimer les indisponibilités des volontaires.</p>
+
+<h3>Ajout ou modification</h3>
+
+{{ render_simple_form(form) }}
+
+<h3>Liste</h3>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Jour</th>
+            <th>Début</th>
+            <th>Fin</th>
+            <th>Qui ?</th>
+            <th>Pourquoi ?</th>
+            <th>Editer</th>
+            <th>Supprimer</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {% for u in unavailabilities %}
+        <tr>
+            <td>{{ u.beginning|date }}</td>
+            <td>{{ u.beginning|time }}</td>
+            <td>{{ u.end|time }}</td>
+            <td><a href="mailto:{{ u.volontaire.user.email }}">
+                    {{ u.volontaire.user.name }}
+            </a></td>
+            <td>{{ u.reason }}</td>
+            <td><a href="{{ url_for('views.assignements.block_timespan', u_id=u.id) }}">
+                    éditer
+            </a></td>
+            <td><a href="{{ url_for('views.assignements.delete_timespan_block', u_id=u.id) }}">
+                    supprimer
+            </a></td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

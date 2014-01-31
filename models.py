@@ -311,5 +311,17 @@ class Assignement(db.Model):
         return cls.query.filter(cls.source != 1)
 
 
+class Unavailability(db.Model):
+    """Used for a Volontaire unavailable on a time span"""
+    id = db.Column(db.Integer, primary_key=True)
+
+    volontaire_id = db.Column(db.Integer, db.ForeignKey('volontaire.id'))
+    volontaire = db.relationship('Volontaire', backref=db.backref('unavailabilities'))
+
+    reason = db.Column(db.String)
+    beginning = db.Column(db.DateTime)
+    end = db.Column(db.DateTime)
+
+
 class Planning(db.Model, Evenement):
     id = db.Column(db.Integer, primary_key=True)
