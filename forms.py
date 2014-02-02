@@ -32,7 +32,7 @@ class MultiCheckboxField(SelectMultipleField):
 class Profil(Form):
     """Profile page form
 
-    `sexe` will only be rendered if user is a Volontaire and has not sexe `sexe`
+    `sexe` will only be rendered if user is a Volontaire and has not set `sexe`
     `disponibilites` will only be rendered if user is a Volontaire
     This is done if `views.basic.profil`
     """
