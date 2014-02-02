@@ -22,7 +22,12 @@ def sweats():
 
     vols, nolimit = sort_those_dicts(ss.summary_orders(), lambda (k, v): k)
     detail_vols, detail_nolimit = sort_those_dicts(ss.all_orders(), lambda (k, v): v)
+
+    stock_to_desc = lambda s: ['%s %s' % (v, k) for (k, v) in sort_dict(s, lambda (k, v): k)]
+
     return render_template('sweats.html',
+                           init_stocks=stock_to_desc(ss.init_stocks),
+                           current_stocks=stock_to_desc(ss.stocks),
                            vols=vols,
                            nolimit=nolimit,
                            detail_vols=detail_vols,

@@ -1,8 +1,10 @@
 {% extends "base.html" %}
 {% block body %}
 
-<h2>Tailles de sweat</h2
+<h2>Tailles de sweat</h2>
 <h3>Volontaires</h3>
+<p>Il y avait initialement {{ init_stocks|join(', ') }}. Il reste {{ current_stocks|join(', ') }}.</p>
+
 <table class="table">
     <thead>
         <tr>
