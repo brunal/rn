@@ -1,5 +1,7 @@
 {% from "_formhelpers.html" import render_simple_form %}
 {% extends "base.html" %}
+{% block title %}{{ activite.nom }}{% endblock %}
+
 {% block body %}
 <h2>{{ activite.nom }}</h2>
 

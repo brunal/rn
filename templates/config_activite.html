@@ -1,5 +1,6 @@
 {% from "_formhelpers.html" import render_simple_form, render_form %}
 {% extends "base.html" %}
+{% block title %}Config' "{{ form.nom.data or 'nouvelle activité' }}"{% endblock %}
 {% block body %}
     <h2>Activité</h2>
     {% if a_id %}

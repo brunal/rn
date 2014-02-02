@@ -1,5 +1,6 @@
 {% from "_formhelpers.html" import render_field %}
 {% extends "base.html" %}
+{% block title %}Profil{% endblock %}
 {% block body %}
 <p>Bonjour {{ user.name }}. Ton adresse email est {{ user.email }}, tu étudies à {{ user.ecole }} et ton numéro de contact est {{ user.portable }}.<br/>
 Tu es inscrit en tant que {% if volontaire %}volontaire{% elif responsable %}responsable de pôle{% elif brn %}membre du BRN{% endif %}.</p>
