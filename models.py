@@ -184,6 +184,9 @@ class Volontaire(db.Model):
         return Assignement.query.filter((Assignement.activite_id == a_id) &
                                         (Assignement.volontaire_id == self.id)).count() > 0
 
+    def is_available_for(self, activite):
+        return not activite.overlaps_with(self.activites)
+
     @classmethod
     def manually_assigned_to(cls, activite):
         return [a.volontaire for a in Assignement.query.filter_by(activite_id=activite, source=2)]
@@ -286,11 +289,22 @@ class Activite(db.Model, Evenement):
     def show_sexe(self):
         return self.get_sexe().name
 
-    def assignements(self):
-        return Assignement.query.filter_by(activite_id=self.id)
+    @property
+    def assignees(self):
+        return [ass.volontaire for ass in self.assignements]
 
     def manual_assignements(self):
         return Assignement.query.filter_by(activite_id=self.id, source=2)
+
+    def get_available_volontaires(self):
+        return [v for v in Volontaire.query.all() if v.is_available_for(self)]
+
+    def overlaps_with(self, activites):
+        for a in activites:
+            if a.debut <= self.debut <= a.fin or \
+               self.debut <= a.debut <= self.fin:
+                return True
+        return False
 
 
 class Assignement(db.Model):

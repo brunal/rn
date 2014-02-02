@@ -43,8 +43,10 @@ def list_activites():
 
 
 def vols_choices_for(a_id):
-    # FIXME
-    return [(m.id, m.user.name) for m in models.Volontaire.query.all()]
+    """Returns available + already affected volontaires"""
+    a = models.Activite.query.get(a_id)
+    return [(v.id, v.user.name)
+            for v in a.assignees + a.get_available_volontaires()]
 
 
 @bp.route('nouvelle/')
@@ -117,7 +119,7 @@ def assign(a_id):
     prev_assign = get_activite(a_id).manual_assignements()
     map(models.db.session.delete, prev_assign)
 
-    # FIXME check constraints
+    # FIXME check all constraints
     for vid in assign.people.data:
         a = models.Assignement()
         a.activite_id = a_id
