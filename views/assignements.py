@@ -15,7 +15,7 @@ bp = Blueprint(__name__, __name__, url_prefix='/affectations/')
 @bp.route('')
 @requires_roles(models.BRN)
 def status():
-    pass
+    return render_template('future.html')
 
 
 @bp.route('blocage', methods=['GET', 'POST'])
@@ -66,4 +66,4 @@ def delete_timespan_block(u_id):
 @bp.route('automatique')
 @requires_roles(models.BRN)
 def automatic():
-    pass
+    return render_template('future.html')
