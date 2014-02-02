@@ -27,9 +27,8 @@ def send_registration_email(user):
 def changepassword():
     try:
         email = request.form['email']
-        old_pwd = request.form['old_password']
         new_pwd = request.form['new_password']
-        result = change_password(email, old_pwd, new_pwd)
+        result = change_password(email, new_pwd)
     except:
         logging.exception("Cannot change password with information %s", request.form)
         result = 'exception'

@@ -54,8 +54,8 @@ def authentify(email, password):
     return User(resp)
 
 
-def change_password(email, old_pwd, new_pwd):
-    user = models.User.query.filter_by(email=email, password=old_pwd).first()
+def change_password(email, new_pwd):
+    user = models.User.query.filter_by(email=email).first()
     if user is not None:
         user.password = new_pwd
         models.db.session.commit()
