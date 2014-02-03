@@ -297,7 +297,7 @@ class Activite(db.Model, Evenement):
         return Assignement.query.filter_by(activite_id=self.id, source=2)
 
     def get_available_volontaires(self):
-        return [v for v in Volontaire.query.all() if v.is_available_for(self)]
+        return sorted([v for v in Volontaire.query.all() if v.is_available_for(self)], key=lambda v: v.user.name)
 
     def overlaps_with(self, activites):
         for a in activites:

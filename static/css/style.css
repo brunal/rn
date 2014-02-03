@@ -24,3 +24,7 @@ ul.errors {
 .respect_nl {
     white-space: pre-wrap;
 }
+
+select[multiple] {
+    height: 20em;
+}
