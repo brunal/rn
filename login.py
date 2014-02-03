@@ -85,7 +85,9 @@ def requires_roles(*roles):
 
 
 def inject_roles():
-    role = current_user.is_authenticated() and get_current_user_role() or None
-    return {'volontaire': role is models.Volontaire,
-            'responsable': role is models.Responsable,
-            'brn': role is models.BRN}
+    if not current_user.is_authenticated():
+        return {}
+    u = current_user.user
+    return {'volontaire': bool(u.volontaire),
+            'responsable': bool(u.responsable),
+            'brn': bool(u.brn)}

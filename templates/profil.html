@@ -3,11 +3,12 @@
 {% block title %}Profil{% endblock %}
 {% block body %}
 <p>Bonjour {{ user.name }}. Ton adresse email est {{ user.email }}, tu étudies à {{ user.ecole }} et ton numéro de contact est {{ user.portable }}.<br/>
-Tu es inscrit en tant que {% if volontaire %}volontaire{% elif responsable %}responsable de pôle{% elif brn %}membre du BRN{% endif %}.</p>
+Tu es inscrit en tant que {% if responsable %}responsable de pôle{% elif volontaire %}volontaire{% elif brn %}membre du BRN{% endif %}.</p>
 
 {% if volontaire %}
 <p>Sur cette plateforme les responsables de pôles peuvent demander des volontaires pour des tâches lors de la RN. Tu recevras un mail décrivant les tâches auxquelles tu es affecté avant la RN.</p>
-{% elif responsable %}
+{% endif %}
+{% if responsable %}
 <p>En tant que responsable, tu peux créer des tâches pour lesquelles tu as besoin de volontaires. Des volontaires y seront affectés. Tu peux choisir affecter toi-même des volontaires à des tâches si tu as besoin de certains personnes en particulier. Dans le cas général, l'affectation sera automatique.</p>
 {% elif brn %}
 <p>En tant que membre du BRN, tu as accès à toutes les tâches et tu peux les modifier ou y affecter certaines personnes. Tu peux également renseigner des indisponibilités des volontaires (au cas par cas) et lancer une procédure d'affectation automatique.</p>

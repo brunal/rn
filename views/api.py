@@ -52,6 +52,9 @@ def try_register(data):
 
         if email in RESPOS_POLES:
             role = Responsable(user)
+            # he's a Volontaire as well)
+            db.session.add(role)
+            role = Volontaire(user)
         elif email in BRNS:
             role = BRN(user)
         else:

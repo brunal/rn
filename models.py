@@ -168,7 +168,7 @@ class User(db.Model):
 
     @property
     def role(self):
-        return self.volontaire or self.responsable or self.brn
+        return self.responsable or self.volontaire or self.brn
 
 
 class Volontaire(db.Model):
