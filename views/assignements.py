@@ -15,7 +15,23 @@ bp = Blueprint(__name__, __name__, url_prefix='/affectations/')
 @bp.route('')
 @requires_roles(models.BRN)
 def status():
-    return render_template('future.html')
+    # misc. stats
+    activites = models.Activite.query.all()
+    vols = models.Volontaire.query.count()
+    slots = sum(a.nombre_volontaires for a in activites)
+    assign_auto = models.Assignement.auto().count()
+    assign_manual = models.Assignement.manual().count()
+
+    tot_help_time = sum((a.nombre_volontaires * (a.fin - a.debut) for a in activites), timedelta())
+
+    return render_template('status-assignement.html',
+                           activites=len(activites),
+                           vols=vols,
+                           slots=slots,
+                           assign_auto=assign_auto,
+                           assign_manual=assign_manual,
+                           avg_slot_length=tot_help_time / slots,
+                           avg_help_time=tot_help_time / vols)
 
 
 @bp.route('blocage', methods=['GET', 'POST'])

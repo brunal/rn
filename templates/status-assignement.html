@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block title %}Status des affectations{% endblock %}
+{% block body %}
+<p>Il y a {{ activites }} activités ayant besoin de volontaires. Cela fait {{ slots }} créneaux à pourvoir. Le créneau moyen est de {{ avg_slot_length|timed }}.</p>
+
+<p>Il y a {{ vols }} volontaires. Chaque volontaire donnera en moyenne {{ avg_help_time|timed }} lors de la RN.</p>
+
+<p>Il y a actuellement {{ assign_auto + assign_manual }} créneaux affectés ({{ assign_manual }} manuellement, {{ assign_auto }} automatiquement).</p>
+
+{% endblock %}
