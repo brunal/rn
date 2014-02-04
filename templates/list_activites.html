@@ -31,7 +31,7 @@
             <td><a href="{% block url_activite %}{% endblock %}">
                 {{ a.nom }}
             </td></a>
-            <td>{{ a.nombre_volontaires }}</td>
+            <td>{{ a.assignees|length }} / {{ a.nombre_volontaires }}</td>
             <td>{{ a.lieu }}</td>
             {% endblock %}{% block tbody_extra scoped %}
             <td><a href="mailto:{{ a.responsable.user.email }}">
