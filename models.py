@@ -188,6 +188,9 @@ class Volontaire(db.Model):
     def manually_assigned_to(cls, activite):
         return [a.volontaire for a in Assignement.query.filter_by(activite_id=activite, source=2)]
 
+    def manual_assignements(self):
+        return [a.activite for a in Assignement.query.filter_by(source=2, volontaire_id=self.id)]
+
     @property
     def activites(self):
         return [aff.activite for aff in self.assignements]
@@ -285,6 +288,9 @@ class Activite(db.Model, Evenement):
 
     def show_sexe(self):
         return self.get_sexe().name
+
+    def needed(self):
+        return self.nombre_volontaires - len(self.manual_assignements())
 
     @property
     def assignees(self):
