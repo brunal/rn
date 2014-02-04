@@ -1,6 +1,8 @@
 # -*- encoding: utf-8 -*-
 """Affectation pags"""
 from datetime import datetime, timedelta
+from threading import Thread
+import logging
 
 from flask import Blueprint, render_template, url_for, flash, redirect
 from flask_mail import Message
@@ -10,6 +12,7 @@ import forms
 from login import requires_roles
 from lib import mail
 from lib.filters import to_time
+from domain import algorithm
 
 
 bp = Blueprint(__name__, __name__, url_prefix='/affectations/')
@@ -117,7 +120,49 @@ def manual():
                            assignements=assignements)
 
 
+background_script = False
+
+
 @bp.route('automatique')
 @requires_roles(models.BRN)
 def automatic():
-    return render_template('future.html')
+    activites = models.Activite.query.all()
+    slots = sum(a.nombre_volontaires for a in activites)
+    assign_manual = models.Assignement.manual().count()
+    assign_auto = models.Assignement.auto().count()
+
+    if background_script:
+        # fetch output
+        with open(algorithm.OUT_FILE, 'rb') as f:
+            content = f.read().decode('utf8')
+    else:
+        content = None
+
+    return render_template('assignements/auto.html',
+                           slots=slots - assign_manual - assign_auto,
+                           assigned_auto=assign_auto,
+                           affectation_running=background_script,
+                           algo_output=content)
+
+
+@bp.route('supprimer-affectations-auto')
+@requires_roles(models.BRN)
+def delete_assignements():
+    delete_count = len(map(models.db.session.delete, models.Assignement.auto()))
+    models.db.session.commit()
+    flash(u'%s affectations supprimées' % delete_count)
+    logging.info("Deleted %s automatic assignements", delete_count)
+    return redirect(url_for('.automatic'))
+
+
+@bp.route('commencer-affectations')
+@requires_roles(models.BRN)
+def start_assigning():
+    global background_script
+    background_script = True
+    Thread(target=algorithm.start).start()
+    flash(u"Une procédure a été lancée")
+    flash(u"Viens ici te tenir au courant de l'avancement")
+    flash(u"Le BRN recevra un mail à la fin de la procédure")
+    logging.info("Launched assignement algorithm")
+    return redirect(url_for('.automatic'))

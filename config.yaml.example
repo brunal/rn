@@ -22,3 +22,4 @@ SWEATS:
     S: 12
     M: 144000
     L: 72
+ALGO_OUT_FILE: 'algo.log'

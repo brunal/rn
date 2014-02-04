@@ -15,6 +15,7 @@ import models
 import login
 import views
 from lib import upload, filters, mail
+from domain import algorithm
 
 
 CONFIG_FILE = 'config.yaml'
@@ -60,6 +61,7 @@ def create_app():
     upload.init_app(app)
     filters.init_app(app)
     views.init_app(app)
+    algorithm.init_app(app)
 
     # register routes
     map(app.register_blueprint, views.all_blueprints)
