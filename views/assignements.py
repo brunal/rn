@@ -3,10 +3,12 @@
 from datetime import datetime, timedelta
 
 from flask import Blueprint, render_template, url_for, flash, redirect
+from flask_mail import Message
 
 import models
 import forms
 from login import requires_roles
+from lib import mail
 
 
 bp = Blueprint(__name__, __name__, url_prefix='/affectations/')
@@ -34,6 +36,23 @@ def status():
                            avg_help_time=tot_help_time / vols)
 
 
+def warn_for_cancellation(assignement):
+    raw_txt = u"{} n'est plus affecté à '{}' ({}): il est indisponible à ce moment."
+    activite_url = url_for('views.responsable.activite_get', a_id=assignement.activite.id, _external=True)
+    txt = raw_txt.format(assignement.volontaire.user.name,
+                         assignement.activite.nom,
+                         activite_url)
+
+    recipient = assignement.activite.responsable.user.email
+    msg = Message(u'[RN] Affectation manuelle supprimée',
+                  recipients=[recipient])
+    msg.body = txt
+    mail.send(msg)
+
+    flash(u"Envoi d'un email au responsable %s" % recipient)
+    return True
+
+
 @bp.route('blocage', methods=['GET', 'POST'])
 @bp.route('blocage/<int:u_id>', methods=['GET', 'POST'])
 @requires_roles(models.BRN)
@@ -56,6 +75,7 @@ def block_timespan(u_id=None):
             flash(u"Suppression de l'affectation à '%s'" % activite.nom)
             assignement = next(a for a in u.volontaire.assignements
                                if a.activite == activite)
+            warn_for_cancellation(assignement)
             models.db.session.delete(assignement)
 
         if not u_id:
