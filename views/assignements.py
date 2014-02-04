@@ -9,6 +9,7 @@ import models
 import forms
 from login import requires_roles
 from lib import mail
+from lib.filters import to_time
 
 
 bp = Blueprint(__name__, __name__, url_prefix='/affectations/')
@@ -36,12 +37,13 @@ def status():
                            avg_help_time=tot_help_time / vols)
 
 
-def warn_for_cancellation(assignement):
-    raw_txt = u"{} n'est plus affecté à '{}' ({}): il est indisponible à ce moment."
+def warn_for_cancellation(assignement, unav):
+    raw_txt = u"{} n'est plus affecté(e) à '{}' ({}): il/elle est indisponible à ce moment (%s entre %s et %s)."
     activite_url = url_for('views.responsable.activite_get', a_id=assignement.activite.id, _external=True)
     txt = raw_txt.format(assignement.volontaire.user.name,
                          assignement.activite.nom,
-                         activite_url)
+                         activite_url,
+                         unav.reason, to_time(unav.begin), to_time(unav.end))
 
     recipient = assignement.activite.responsable.user.email
     msg = Message(u'[RN] Affectation manuelle supprimée',
@@ -75,7 +77,7 @@ def block_timespan(u_id=None):
             flash(u"Suppression de l'affectation à '%s'" % activite.nom)
             assignement = next(a for a in u.volontaire.assignements
                                if a.activite == activite)
-            warn_for_cancellation(assignement)
+            warn_for_cancellation(assignement, u)
             models.db.session.delete(assignement)
 
         if not u_id:
