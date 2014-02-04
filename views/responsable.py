@@ -38,7 +38,7 @@ def csv_activites():
 @bp.route('')
 @requires_roles(models.Responsable)
 def list_activites():
-    activites = current_user.user.role.activites
+    activites = sorted(current_user.user.role.activites, key=lambda a: a.debut)
     return render_template('responsable_activites.html', activites=activites)
 
 
