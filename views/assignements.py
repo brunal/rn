@@ -51,6 +51,13 @@ def block_timespan(u_id=None):
         u.beginning = datetime.combine(day, form.beginning.data)
         u.end = datetime.combine(day, form.end.data)
 
+        # conflict check
+        for activite in u.conflicts():
+            flash(u"Suppression de l'affectation à '%s'" % activite.nom)
+            assignement = next(a for a in u.volontaire.assignements
+                               if a.activite == activite)
+            models.db.session.delete(assignement)
+
         if not u_id:
             models.db.session.add(u)
             flash(u'Indisponibilité enregistrée')

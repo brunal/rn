@@ -184,9 +184,6 @@ class Volontaire(db.Model):
         return Assignement.query.filter((Assignement.activite_id == a_id) &
                                         (Assignement.volontaire_id == self.id)).count() > 0
 
-    def is_available_for(self, activite):
-        return not activite.overlaps_with(self.activites)
-
     @classmethod
     def manually_assigned_to(cls, activite):
         return [a.volontaire for a in Assignement.query.filter_by(activite_id=activite, source=2)]
@@ -297,14 +294,27 @@ class Activite(db.Model, Evenement):
         return Assignement.query.filter_by(activite_id=self.id, source=2)
 
     def get_available_volontaires(self):
-        return sorted([v for v in Volontaire.query.all() if v.is_available_for(self)], key=lambda v: v.user.name)
+        return sorted([v for v in Volontaire.query.all() if
+                       not self.overlaps_with(v.activites)],
+                      key=lambda v: v.user.name)
 
     def overlaps_with(self, activites):
+        return self.conflicts(self.debut, self.fin, activites)
+
+    @classmethod
+    def conflicts(cls, beginning, end, activites):
+        """Checks whether a time span conflicts with `activites`
+
+        Returns
+        -------
+        conflicts : Activite list
+        """
+        conflicts = []
         for a in activites:
-            if a.debut <= self.debut <= a.fin or \
-               self.debut <= a.debut <= self.fin:
-                return True
-        return False
+            if a.debut <= beginning <= a.fin or \
+               beginning <= a.debut <= end:
+                conflicts.append(a)
+        return conflicts
 
 
 class Assignement(db.Model):
@@ -342,6 +352,10 @@ class Unavailability(db.Model):
     reason = db.Column(db.String)
     beginning = db.Column(db.DateTime)
     end = db.Column(db.DateTime)
+
+    def conflicts(self):
+        return Activite.conflicts(self.beginning, self.end,
+                                  self.volontaire.activites)
 
 
 class Planning(db.Model, Evenement):
