@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}Affectations manuelles{% endblock %}
+{% block body %}
+<h2>Liste des affectations manuelles</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Qui</th>
+            <th>Quoi</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {% for a in assignements %}
+        <tr>
+            <td>{{ a.volontaire.user.name }}</td>
+            <td><a href="{{ url_for('views.responsable.activite_get', a_id=a.activite.id) }}">
+                    {{ a.activite.nom }}
+            </a></td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

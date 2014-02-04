@@ -24,7 +24,7 @@ def status():
 
     tot_help_time = sum((a.nombre_volontaires * (a.fin - a.debut) for a in activites), timedelta())
 
-    return render_template('status-assignement.html',
+    return render_template('assignements/status.html',
                            activites=len(activites),
                            vols=vols,
                            slots=slots,
@@ -73,7 +73,7 @@ def block_timespan(u_id=None):
     unavailabilities = models.Unavailability.query.all()
     unavailabilities.sort(key=lambda u: u.beginning)
 
-    return render_template('unavailabilities.html',
+    return render_template('assignements/unavailabilities.html',
                            form=form, unavailabilities=unavailabilities)
 
 
@@ -84,6 +84,15 @@ def delete_timespan_block(u_id):
     models.db.session.commit()
     flash(u'Indisponibilité supprimée')
     return redirect(url_for('.block_timespan'))
+
+
+@bp.route('manuel')
+@requires_roles(models.BRN)
+def manual():
+    assignements = list(models.Assignement.manual())
+    assignements.sort(key=lambda a: (a.volontaire.user.name, a.activite.debut))
+    return render_template('assignements/manual.html',
+                           assignements=assignements)
 
 
 @bp.route('automatique')
