@@ -7,6 +7,7 @@ import models
 from datetime import timedelta
 
 from domain.assignement import Stats
+from domain.addresses import DEFAULT_AGENT
 
 logging = log.getLogger('rn.domain.algorithm')
 logging.setLevel(log.DEBUG)
@@ -54,6 +55,7 @@ def start():
 class Assignator(object):
     def __init__(self):
         self.stats = Stats()
+        self.travel_agent = DEFAULT_AGENT()
 
     def get_tasks(self):
         return iter(models.Activite.most_in_need_of_help())
@@ -179,7 +181,6 @@ class Assignator(object):
                 return tiers[tier]
         return []
 
-    _closeness_hacks = [("Assas", 10), ("75006", 15), ("Montmartre", 15)]
     _closeness_memory = {}
 
     def _rate_closeness(self, t1, t2):
@@ -191,20 +192,24 @@ class Assignator(object):
         if (t1, t2) in self._closeness_memory:
             return self._closeness_memory[(t1, t2)]
 
-        limit_feasible = timedelta(minutes=30)
+        time_needed = self.travel_agent.get_time_between(t1.lieu, t2.lieu)
+        time_we_have = t2.debut - t1.fin
 
-        if t1.lieu != t2.lieu:
-            for k, d in self._closeness_hacks:
-                if k in t1.lieu and k in t2.lieu:
-                    # we know the travel time
-                    limit_feasible = timedelta(minutes=d)
+        try:
+            foo = time_we_have < time_needed
+            if not foo:
+                foo
+        except TypeError:
+            logging.warning("Time needed = %s", time_needed)
+            logging.warning("Addrs = %s ET %s", t1.lieu, t2.lieu)
 
-            if (t2.debut - t1.fin) < limit_feasible:
-                # not enough time!
-                logging.debug(u"On ne peut pas aller de %s à %s suffisamment rapidement",
-                              t1.lieu, t2.lieu)
+        if time_we_have < time_needed:
+            # not enough time!
+            logging.debug(u"On ne peut pas aller de %s à %s suffisamment rapidement",
+                          t1.lieu, t2.lieu)
             result = -1
-        elif (t2.debut - t1.fin) < timedelta(minutes=60):
+        elif time_we_have - time_needed < timedelta(minutes=30):
+            # less than 30 mins watsed
             result = 1
         else:
             result = 0
