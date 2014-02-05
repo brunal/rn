@@ -179,22 +179,39 @@ class Assignator(object):
                 return tiers[tier]
         return []
 
+    _closeness_hacks = [("Assas", 10), ("75006", 15), ("Montmartre", 15)]
+    _closeness_memory = {}
+
     def _rate_closeness(self, t1, t2):
         """
         -1 = impossible
         0 = ok
         1 = cool
         """
-        if (t2.debut - t1.fin) < timedelta(minutes=30) and \
-           t2.lieu != t1.lieu:
-            # not enough time!
-            logging.debug(u"On ne peut pas aller de %s à %s suffisamment rapidement",
-                          t1.lieu, t2.lieu)
-            return -1
-        elif (t2.debut - t1.fin) < timedelta(minutes=180):
-            return 1
+        if (t1, t2) in self._closeness_memory:
+            return self._closeness_memory[(t1, t2)]
+
+        limit_feasible = timedelta(minutes=30)
+
+        if t1.lieu != t2.lieu:
+            for k, d in self._closeness_hacks:
+                if k in t1.lieu and k in t2.lieu:
+                    # we know the travel time
+                    limit_feasible = timedelta(minutes=d)
+
+            if (t2.debut - t1.fin) < limit_feasible:
+                # not enough time!
+                logging.debug(u"On ne peut pas aller de %s à %s suffisamment rapidement",
+                              t1.lieu, t2.lieu)
+            result = -1
+        elif (t2.debut - t1.fin) < timedelta(minutes=60):
+            result = 1
         else:
-            return 0
+            result = 0
+
+        # memoize the result
+        self._closeness_memory[(t1, t2)] = result
+        return result
 
     def push_assignement(self, helper, task):
         a = models.Assignement()
