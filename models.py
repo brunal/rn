@@ -89,9 +89,9 @@ class SweatShop(object):
 
     def available(self, user):
         if user.volontaire:
-            return self.stocks.keys()
-        else:
             return [s for s, count in self.stocks.items() if count > 0]
+        else:
+            return self.stocks.keys()
 
     @property
     def sizes(self):
