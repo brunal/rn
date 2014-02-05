@@ -1,6 +1,12 @@
+{% from "_mischelpers.html" import render_conflicts_full %}
 {% extends "base.html" %}
 {% block title %}Status des affectations{% endblock %}
 {% block body %}
+
+{{ render_conflicts_full(conflicts) }}
+
+<h3>Résumé de la situation</h3>
+
 <p>Il y a {{ activites_count }} activités ayant besoin de volontaires. Cela fait {{ stats.slots }} créneaux à pourvoir. Le créneau moyen est de {{ stats.avg_slot_length|timed }}.</p>
 
 <p>Il y a {{ stats.vols }} volontaires. Si toutes les tâches étaient remplies alors chaque volontaire donnerait en moyenne {{ stats.avg_help_time|timed }} lors de la RN.</p>

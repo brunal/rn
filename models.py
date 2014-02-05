@@ -189,6 +189,16 @@ class Volontaire(db.Model):
     def manually_assigned_to(cls, activite):
         return [a.volontaire for a in Assignement.query.filter_by(activite_id=activite, source=Assignement.MANUAL)]
 
+    def check_conflicts(self):
+        all_conflicts = []
+        acts = self.activites
+        for a, rest in ((act, acts[i + 1:]) for i, act in enumerate(acts)):
+
+            overlaps = a.overlaps_with(rest)
+            for o in overlaps:
+                all_conflicts.append((a, o))
+        return all_conflicts
+
     @property
     def activites(self):
         return [aff.activite for aff in self.assignements]

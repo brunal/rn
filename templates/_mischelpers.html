@@ -1,0 +1,26 @@
+{% macro render_conflicts(conflicts) %}
+<ul>
+    {% for v, conflicts in conflicts %}
+    <li>
+        <a href="{{ url_for('views.activite.vol_assignements', vol_id=v.id) }}">
+            {{ v.user.name }}
+        </a> ne peut pas être à la fois
+        <ul>
+            {% for a1, a2 in conflicts %}
+            <li>à <a href="{{ url_for('views.activite.activite', activite_id=a1.id) }}">{{ a1.nom }}</a>
+                et <a href="{{ url_for('views.activite.activite', activite_id=a2.id) }}">{{ a2.nom }}</a>
+            </li>
+            {% endfor %}
+        </ul>
+    </li>
+    {% endfor %}
+</ul>
+{% endmacro %}
+
+{% macro render_conflicts_full(conflicts) %}
+{% if conflicts %}
+<h3>Conflits</h3>
+<p>Des conflits liés aux affectations manuelles ont été détectés.</p>
+{{ render_conflicts(conflicts) }}
+{% endif %}
+{% endmacro %}

@@ -19,6 +19,13 @@ from domain import algorithm, assignement
 bp = Blueprint(__name__, __name__, url_prefix='/affectations/')
 
 
+def compute_conflicts():
+    for v in models.Volontaire.query.all():
+        conflicts = v.check_conflicts()
+        if conflicts:
+            yield v, conflicts
+
+
 @bp.route('')
 @requires_roles(models.BRN)
 def status():
@@ -31,7 +38,8 @@ def status():
                            activites_count=models.Activite.query.count(),
                            stats=stats,
                            assign_auto=assign_auto,
-                           assign_manual=assign_manual)
+                           assign_manual=assign_manual,
+                           conflicts=compute_conflicts())
 
 
 @bp.route('liste')
@@ -48,6 +56,7 @@ def list_assignements():
     stats_by_person.sort(key=lambda (w, c, t): t, reverse=True)
 
     return render_template('assignements/by_person.html',
+                           conflicts=compute_conflicts(),
                            stats=stats_by_person)
 
 

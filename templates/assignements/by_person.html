@@ -1,9 +1,12 @@
+{% from "_mischelpers.html" import render_conflicts_full %}
 {% extends "base.html" %}
 {% block title %}Récapitulatif des affectations par personne{% endblock %}
 {% block body %}
-<h2>
-    Affectations par personne
-</h2>
+<h2>Affectations par personne</h2>
+
+{{ render_conflicts_full(conflicts) }}
+
+<h3>Charge de travail</h3>
 
 <table class="table">
     <thead>
