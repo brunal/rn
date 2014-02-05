@@ -54,7 +54,9 @@
     {% if assigned %}
     <ul>Les personnes affectées à la tâche sont les suivantes :
         {% for ass in assigned %}
-        <li>{{ ass.user.name }}</li>
+        <li><a href="{{ url_for('views.activite.vol_assignements', vol_id=ass.id) }}">
+            {{ ass.user.name }}
+        </a></li>
         {% endfor %}
     </ul>
     {% endif %}

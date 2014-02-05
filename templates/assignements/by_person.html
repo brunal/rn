@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}Récapitulatif des affectations par personne{% endblock %}
+{% block body %}
+<h2>
+    Affectations par personne
+</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Volontaire</th>
+            <th>Nombre de tâches</th>
+            <th>Temps total</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {% for who, count, tot_time in stats %}
+        <tr>
+            <td><a href="{{ url_for('views.activite.vol_assignements', vol_id=who.id) }}">
+                    {{ who.user.name }}
+            </a></td>
+            <td>{{ count }}</td>
+            <td>{{ tot_time|timed }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}

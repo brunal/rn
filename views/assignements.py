@@ -2,6 +2,7 @@
 """Affectation pags"""
 from datetime import datetime, timedelta
 from threading import Thread
+from collections import defaultdict
 import logging
 
 from flask import Blueprint, render_template, url_for, flash, redirect
@@ -31,6 +32,23 @@ def status():
                            stats=stats,
                            assign_auto=assign_auto,
                            assign_manual=assign_manual)
+
+
+@bp.route('liste')
+@requires_roles(models.BRN)
+def list_assignements():
+    ass_by_person = defaultdict(list)
+    for ass in models.Assignement.query.all():
+        ass_by_person[ass.volontaire].append(ass.activite)
+
+    stats_by_person = []
+    for who, what in ass_by_person.items():
+        stats_by_person.append((who, len(what),
+                                sum([w.fin - w.debut for w in what], timedelta())))
+    stats_by_person.sort(key=lambda (w, c, t): t, reverse=True)
+
+    return render_template('assignements/by_person.html',
+                           stats=stats_by_person)
 
 
 def warn_for_cancellation(assignement, unav):

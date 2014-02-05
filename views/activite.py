@@ -19,6 +19,24 @@ def asort(acts):
     return sorted(acts, key=lambda a: a.debut)
 
 
+@bp.route('de/<int:vol_id>')
+@requires_roles(BRN)
+def vol_assignements(vol_id):
+    vol = Volontaire.query.get(vol_id)
+    acts = asort(vol.activites)
+    return render_template('activites.html', activites=acts,
+                           csv_version=url_for('.vol_assignements_csv', vol_id=vol_id),
+                           acts_title="Affectations de %s" % vol.user.name)
+
+
+@bp.route('de/<int:vol_id>.csv')
+@requires_roles(BRN)
+def vol_assignements_csv(vol_id):
+    vol = Volontaire.query.get(vol_id)
+    acts = asort(vol.activites)
+    return csv_response(to_csv(acts), "affectations_de_%s" % vol.user.name)
+
+
 @bp.route('')
 @requires_roles(Volontaire)
 def my_assignements():
