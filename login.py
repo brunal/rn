@@ -68,18 +68,15 @@ def load_user(id):
     return User.get(id)
 
 
-def get_current_user_role():
-    return type(current_user.user.role)
-
-
 def requires_roles(*roles):
     """Authorization decorator"""
     def wrapper(f):
         @wraps(f)
         def wrapped(*args, **kwargs):
-            if get_current_user_role() not in roles:
-                abort(401)
-            return f(*args, **kwargs)
+            if any(Role.query.filter_by(user=current_user.user).first()
+                   for Role in roles):
+                return f(*args, **kwargs)
+            abort(401)
         return login_required(wrapped)
     return wrapper
 

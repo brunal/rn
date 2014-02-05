@@ -1,18 +1,8 @@
 {% extends "list_activites.html" %}
 {% block title %}Activités{% endblock %}
 
-{% block activites_title %}
-    {% if volontaire %}
-    Tes activités de la RN
-    {% else %}
-    Activités de la RN ayant besoin de volontaires
-    {% endif %}
-{% endblock %}
+{% block activites_title %}{{ acts_title }}{% endblock %}
 
 {% block url_activite %}
 {{ url_for('views.activite.activite', activite_id=a.id) }}
 {% endblock %}
-
-{% block url_csv %}
-{{ url_for('views.activite.csv_activites') }}
-{% endblock url_csv %}

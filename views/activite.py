@@ -1,43 +1,69 @@
 # -*- encoding: utf-8 -*-
 """
-Vues d'activités pour ceux qui n'en sont pas responsable
+Vues d'activités
 """
-from flask import Blueprint, Response, send_from_directory, abort, render_template
+from flask import Blueprint, send_from_directory, abort, render_template, url_for
 from flask.ext.login import login_required, current_user
 from werkzeug import secure_filename
 
-from models import Activite
-from domain.activites import to_csv
+from login import requires_roles
+from models import Activite, Volontaire, Responsable, BRN
+from domain.activites import to_csv, csv_response
 from lib import upload
 
 
 bp = Blueprint(__name__, __name__, url_prefix='/activite/')
 
 
-# Accès aux données des activités
-
-def activites():
-    u = current_user.user
-    if u.brn or u.responsable:
-        activites = Activite.query.all()
-    elif u.volontaire:
-        activites = u.volontaire.activites
-    return sorted(activites, key=lambda a: a.debut)
+def asort(acts):
+    return sorted(acts, key=lambda a: a.debut)
 
 
 @bp.route('')
-@login_required
-def list_activites():
-    return render_template('activites.html', activites=activites())
+@requires_roles(Volontaire)
+def my_assignements():
+    acts = asort(current_user.user.volontaire.activites)
+    return render_template('activites.html', activites=acts,
+                           csv_version=url_for('.my_assignements_csv'),
+                           acts_title="Tes affectations")
 
 
 @bp.route('csv')
-@login_required
-def csv_activites():
-    acts = activites()
-    csv = to_csv(acts)
-    return Response(csv, content_type="text/csv; charset=utf-8",
-                    headers={"Content-Disposition": "attachment;filename=activites.csv"})
+@requires_roles(Volontaire)
+def my_assignements_csv():
+    acts = asort(current_user.user.volontaire.activites)
+    return csv_response(to_csv(acts), "mes_affectations")
+
+
+@bp.route('miennes')
+@requires_roles(Responsable)
+def my_activities():
+    activites = asort(current_user.user.responsable.activites)
+    return render_template('responsable_activites.html', activites=activites,
+                           csv_version=url_for('.my_activities_csv'))
+
+
+@bp.route('miennes.csv')
+@requires_roles(Responsable)
+def my_activities_csv():
+    activites = asort(current_user.user.responsable.activites)
+    return csv_response(to_csv(activites), "mes_activites")
+
+
+@bp.route('toutes')
+@requires_roles(Responsable, BRN)
+def all_activities():
+    activites = asort(Activite.query.all())
+    return render_template("activites.html", activites=activites,
+                           csv_version=url_for('.all_activities_csv'),
+                           acts_title=u"Activités de la RN ayant besoin de volontaires")
+
+
+@bp.route('toutes.csv')
+@requires_roles(Responsable, BRN)
+def all_activities_csv():
+    activites = asort(Activite.query.all())
+    return csv_response(to_csv(activites), "toutes_activites")
 
 
 def can_view_activite(user, id):

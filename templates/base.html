@@ -31,12 +31,19 @@
             <li><a href="{{ url_for('views.basic.logout') }}">Déconnexion</a></li>
             <li><a href="{{ url_for('views.basic.profil') }}">Profil</a></li>
 
-            <li><a href="{{ url_for('views.activite.list_activites') }}">Activités</a></li>
+            {% if volontaire %}
+            <li><a href="{{ url_for('views.activite.my_assignements') }}">Mes affectations</a></li>
+            {% endif %}
 
             {% if responsable %}
-            <li><a href="{{ url_for('views.responsable.list_activites') }}">Mes activités</a></li>
+            <li><a href="{{ url_for('views.activite.my_activities') }}">Mes activités</a></li>
+            {% endif %}
 
-            {% elif brn %}
+            {% if responsable or brn %}
+            <li><a href="{{ url_for('views.activite.all_activities') }}">Toutes les activités</a></li>
+            {% endif %}
+
+            {% if brn %}
             <li><a href="{{ url_for('views.brn.sweats') }}">Commande de sweats</a></li>
             <li class="drowdown">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">Affectations<b class="caret"></b></a>

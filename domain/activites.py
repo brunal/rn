@@ -1,6 +1,8 @@
 # -*- encoding: utf-8 -*-
 from cStringIO import StringIO
 
+from flask import Response
+
 from lib import ucsv
 from lib.filters import to_date, to_time
 
@@ -17,3 +19,10 @@ def to_csv(activites):
                     a.description])
 
     return csv_activites.getvalue()
+
+
+def csv_response(csv, filename):
+    if not filename.endswith(".csv"):
+        filename += ".csv"
+    return Response(csv, content_type="text/csv; charset=utf-8",
+                    headers={"Content-Disposition": "attachment;filename=%s" % filename})

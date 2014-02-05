@@ -15,7 +15,3 @@ Activités que tu as configurées
 {% block bonus_bottom %}
 <p><a href="{{ url_for('views.responsable.activite_get') }}">Ajouter une activité</a></p>
 {% endblock %}
-
-{% block url_csv %}
-{{ url_for('views.responsable.csv_activites') }}
-{% endblock %}

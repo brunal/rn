@@ -10,7 +10,7 @@ from flask.ext.login import current_user
 import forms
 import models
 from domain.activites import to_csv
-from login import requires_roles, get_current_user_role
+from login import requires_roles
 from lib import upload
 
 
@@ -21,8 +21,8 @@ bp = Blueprint(__name__, __name__, url_prefix='/responsable/')
 
 def get_activite(id):
     activite = models.Activite.query.get(id) or abort(404)
-    if get_current_user_role() is not models.BRN and \
-       activite.responsable != current_user.user.role:
+    if not current_user.user.brn and \
+       activite.responsable != current_user.user.responsable:
         abort(401)
     return activite
 
@@ -83,7 +83,7 @@ def activite_post(a_id=None):
         return activite_get(a_id, form=form)
 
     if a_id is None:
-        if get_current_user_role() == models.BRN:
+        if current_user.user.brn:
             # cannot create new activity
             flash(u'Il est impossible pour un membre du BRN de créer une activité')
             redirect(url_for('views.activite.list_activites'))
