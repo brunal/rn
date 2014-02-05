@@ -35,7 +35,8 @@ def status():
 
 def warn_for_cancellation(assignement, unav):
     raw_txt = u"{} n'est plus affecté(e) à '{}' ({}): il/elle est indisponible à ce moment (%s entre %s et %s)."
-    activite_url = url_for('views.responsable.activite_get', a_id=assignement.activite.id, _external=True)
+    activite_url = url_for('views.responsable.activite_get',
+                           a_id=assignement.activite.id, _external=True)
     txt = raw_txt.format(assignement.volontaire.user.name,
                          assignement.activite.nom,
                          activite_url,

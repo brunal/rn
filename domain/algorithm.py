@@ -88,7 +88,7 @@ class Assignator(object):
 
             helper = self.find_best_match(potential_helpers, t)
             if helper is None:
-                logging.info(u"Personne ne peut faire '%s' (problème de trajet ?)")
+                logging.info(u"Personne ne peut faire '%s' (problème de trajet ?)", t.nom)
                 impossible.add(t)
                 continue
 
