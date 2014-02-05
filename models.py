@@ -301,7 +301,9 @@ class Activite(db.Model, Evenement):
         need_help = [a for a in cls.all()
                      if len(a.assignees) < a.nombre_volontaires]
         # sort by filling percentage + low need of help
-        return sorted(need_help, key=lambda a: (len(a.assignees) / a.nombre_volontaires, a.nombre_volontaires))
+        key = lambda a: (len(a.assignees) / float(a.nombre_volontaires),
+                         a.nombre_volontaires)
+        return sorted(need_help, key=key)
 
     @property
     def assignees(self):
