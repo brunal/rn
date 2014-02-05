@@ -41,7 +41,10 @@
 <p>Les personnes suivantes ont été affectées à cette tache :</p>
 <ul>
     {% for a in activite.assignements %}
-    <li>{{ a.volontaire.user.name }}</li>
+    <li>
+        [{{'M' if a.source == a.MANUAL else 'A' }}]
+        {{ a.volontaire.user.name }}
+    </li>
     {% endfor %}
 </ul>
 {% endif %}

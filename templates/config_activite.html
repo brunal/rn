@@ -47,23 +47,25 @@
     </div>
     {% endif %}
 
-    {% if assignements %}
+    {% if assign %}
     <h2>Affectations manuelles</h2>
 
     <p>Vous pouvez ici forcer l'affectation de volontaires à cette tâche. Seulement si vous avez une bonne raison.</p>
-    {% if assigned %}
+    {% if assignements %}
     <ul>Les personnes affectées à la tâche sont les suivantes :
-        {% for ass in assigned %}
-        <li><a href="{{ url_for('views.activite.vol_assignements', vol_id=ass.id) }}">
-            {{ ass.user.name }}
-        </a></li>
+        {% for ass in assignements %}
+        <li>[{{'M' if ass.source == ass.MANUAL else 'A' }}]
+            <a href="{{ url_for('views.activite.vol_assignements', vol_id=ass.volontaire.id) }}">
+            {{ ass.volontaire.user.name }}
+            </a>
+        </li>
         {% endfor %}
     </ul>
     {% endif %}
 
     <form method="POST" action="{{ url_for('views.responsable.assign', a_id=a_id) }}">
         <p>Utilisez la touche <strong>Ctrl</strong> pour sélectionner/déselectionner plusieurs personnes.</p>
-        {{ render_form(assignements) }}
+        {{ render_form(assign) }}
         <input type="submit"/>
     </form>
     {% endif %}

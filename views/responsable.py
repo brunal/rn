@@ -62,16 +62,15 @@ def activite_get(a_id=None, form=None):
     if activite.debut:
         form.jour.data = (activite.debut.date() - forms.JEUDI).days
 
-    assigned = [a.volontaire for a in activite.manual_assignements()]
-    assign = forms.ManualActiviteAssignement(people=[a.id
-                                                     for a in assigned])
+    assign = forms.ManualActiviteAssignement(people=[a.volontaire.id
+                                                     for a in activite.assignements])
     assign.people.choices = vols_choices_for(a_id)
 
     return render_template('config_activite.html', form=form, a_id=activite.id,
                            files=upload.list_files(activite.id),
                            extensions=upload.config.ALLOWED_EXTENSIONS,
-                           assigned=assigned,
-                           assignements=assign)
+                           assignements=activite.assignements,
+                           assign=assign)
 
 
 @bp.route('nouvelle/', methods=['POST'])
@@ -115,20 +114,33 @@ def assign(a_id):
     if not assign.validate():
         return activite_get()
 
-    # delete previous ones, add new ones
-    prev_assign = get_activite(a_id).manual_assignements()
-    map(models.db.session.delete, prev_assign)
+    # delete the ones that have changed
+    prev_assign_dict = {a.volontaire_id: a
+                        for a in get_activite(a_id).assignements}
 
-    # FIXME check all constraints
     for vid in assign.people.data:
+        if vid in prev_assign_dict:
+            # nothing to do
+            del prev_assign_dict[vid]
+            continue
+
+        # add it
         a = models.Assignement()
         a.activite_id = a_id
         a.volontaire_id = vid
-        a.source = 2
+        a.source = a.MANUAL
         models.db.session.add(a)
+
+        vname = models.Volontaire.query.get(vid).user.name
+        flash(u"%s affecté à la tâche" % vname)
+
+    # delete previous ones
+    for p_a in prev_assign_dict.values():
+        flash(u"%s enlevé de la tâche" % p_a.volontaire.user.name)
+        models.db.session.delete(p_a)
+
     models.db.session.commit()
 
-    flash('Affectations bien prises en compte')
     return redirect(url_for('.activite_get', a_id=a_id))
 
 
