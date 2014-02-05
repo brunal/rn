@@ -78,7 +78,7 @@ class Assignator(object):
             potential_helpers = t.get_available_volontaires()
             if not potential_helpers:
                 logging.info(u"Personne n'est disponible pour '%s': elle restera bloquée à %s/%s",
-                             t.nom, t.nombre_volontaires, len(t.assignees))
+                             t.nom, len(t.assignees), t.nombre_volontaires)
                 impossible.add(t)
                 continue
 
