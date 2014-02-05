@@ -1,3 +1,4 @@
+{% from "_formhelpers.html" import render_simple_form %}
 {% from "_mischelpers.html" import render_conflicts_full %}
 {% extends "base.html" %}
 {% block title %}Status des affectations{% endblock %}
@@ -16,5 +17,11 @@
 {% set min, max, mean = stats.assign_values() %}
 <p>La personne qui aidera le moins y passera {{ min|timed }}, celle qui aidera le plus {{ max|timed }}. En moyenne, un volontaire aidera {{ mean|timed }} pendant la RN.</p>
 
+<h3>Envoi de l'emploi du temps aux volontaires</h3>
+<p>Si tu es satisfait par les emplois du temps, tu peux ici envoyer un email personnalisé aux volontaires.
+
+A la fin de ton texte sera rajouté la liste des affectations de chacun, ainsi qu'un lien vers leur emploi du temps ici-même.</p>
+
+{{ render_simple_form(final_mail_form) }}
 
 {% endblock %}

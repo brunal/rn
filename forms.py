@@ -94,3 +94,8 @@ class Unavailability(Form):
                               format='%H:%M', filters=(time_or_none,))
     end = DateTimeField('fin (HH:MM)', validators=mk_req('fin'),
                         format='%H:%M', filters=(time_or_none,))
+
+
+class FinalMail(Form):
+    subject = StringField('sujet', validators=mk_req('un sujet'))
+    message = TextAreaField(u'message', validators=mk_req('le message'))

@@ -26,15 +26,29 @@ def compute_conflicts():
             yield v, conflicts
 
 
-@bp.route('')
+@bp.route('', methods=['GET', 'POST'])
 @requires_roles(models.BRN)
 def status():
     # misc. stats
+    form = forms.FinalMail()
+    if form.validate_on_submit():
+        subject = form.subject.data
+        message = form.subject.data
+
+        try:
+            count = assignement.send_final_mail(subject, message)
+            flash(u"%s emails correctement envoyés !" % count)
+            return redirect(url_for('.status'))
+        except Exception as e:
+            logging.exception(":-(")
+            flash(u"Problème lors de l'envoi de l'email: %s" % e.message)
+
     stats = assignement.Stats()
     assign_auto = models.Assignement.auto().count()
     assign_manual = models.Assignement.manual().count()
 
     return render_template('assignements/status.html',
+                           final_mail_form=form,
                            activites_count=models.Activite.query.count(),
                            stats=stats,
                            assign_auto=assign_auto,
