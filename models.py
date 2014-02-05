@@ -343,6 +343,9 @@ class Activite(db.Model, Evenement):
         """
         conflicts = []
         for a in activites:
+            if a is None:
+                #FIXME for real. why does check conflits send None actes?
+                continue
             if a.debut <= beginning <= a.fin or \
                beginning <= a.debut <= end:
                 if _bool:  # I just want the answer!
