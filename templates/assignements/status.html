@@ -3,8 +3,12 @@
 {% block body %}
 <p>Il y a {{ activites_count }} activités ayant besoin de volontaires. Cela fait {{ stats.slots }} créneaux à pourvoir. Le créneau moyen est de {{ stats.avg_slot_length|timed }}.</p>
 
-<p>Il y a {{ stats.vols }} volontaires. Chaque volontaire donnera en moyenne {{ stats.avg_help_time|timed }} lors de la RN.</p>
+<p>Il y a {{ stats.vols }} volontaires. Si toutes les tâches étaient remplies alors chaque volontaire donnerait en moyenne {{ stats.avg_help_time|timed }} lors de la RN.</p>
 
 <p>Il y a actuellement {{ assign_auto + assign_manual }} créneaux affectés ({{ assign_manual }} manuellement, {{ assign_auto }} automatiquement).</p>
+
+{% set min, max, mean = stats.assign_values() %}
+<p>La personne qui aidera le moins y passera {{ min|timed }}, celle qui aidera le plus {{ max|timed }}. En moyenne, un volontaire aidera {{ mean|timed }} pendant la RN.</p>
+
 
 {% endblock %}
