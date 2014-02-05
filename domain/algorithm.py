@@ -77,7 +77,7 @@ class Assignator(object):
             # try to assign someone to t
             potential_helpers = t.get_available_volontaires()
             if not potential_helpers:
-                logging.info(u"Personne n'est disponible pour '%s': elle restere bloquée à %s/%s",
+                logging.info(u"Personne n'est disponible pour '%s': elle restera bloquée à %s/%s",
                              t.nom, t.nombre_volontaires, len(t.assignees))
                 impossible.add(t)
                 continue
@@ -96,6 +96,7 @@ class Assignator(object):
             self.push_assignement(helper, t)
 
     def find_best_match(self, helpers, task):
+        # soft constraints
         for f in [self._on_work_time, self._on_gender]:
             helpers_ = f(helpers, task)
             if len(helpers_) == 1:
@@ -103,10 +104,11 @@ class Assignator(object):
             elif helpers_:
                 helpers = helpers_
 
-        # this is a hard constraint
-        helpers = self._on_grouping(helpers, task)
-        if not helpers:
-            return None
+        # hard constraints
+        for f in [self._on_work_time_hard, self._on_grouping]:
+            helpers = self._on_grouping(helpers, task)
+            if not helpers:
+                return None
 
         # take the one who works the least
         return min(helpers, key=lambda h: h.help_time)
@@ -115,6 +117,12 @@ class Assignator(object):
         helpers = filter(lambda h: h.help_time < self.stats.avg_help_time, helpers)
         if not helpers:
             logging.debug("Tout le monde travaille trop pour faire '%s'!", task.nom)
+        return helpers
+
+    def _on_work_time_hard(self, helpers, task):
+        helpers = filter(lambda h: h.help_time < 1.5 * self.stats.avg_help_time, helpers)
+        if not helpers:
+            logging.debug("Tout le monde travaille BEAUCOUP trop pour faire '%s'!", task.nom)
         return helpers
 
     def _on_gender(self, helpers, task):
