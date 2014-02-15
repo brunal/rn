@@ -98,6 +98,12 @@ class Assignator(object):
             self.push_assignement(helper, t)
 
     def find_best_match(self, helpers, task):
+        # hard constraints
+        for f in [self._on_work_time_hard, self._on_grouping]:
+            helpers = f(helpers, task)
+            if not helpers:
+                return None
+
         # soft constraints
         for f in [self._on_work_time, self._on_gender]:
             helpers_ = f(helpers, task)
@@ -105,12 +111,6 @@ class Assignator(object):
                 return helpers_[0]
             elif helpers_:
                 helpers = helpers_
-
-        # hard constraints
-        for f in [self._on_work_time_hard, self._on_grouping]:
-            helpers = self._on_grouping(helpers, task)
-            if not helpers:
-                return None
 
         # take the one who works the least
         return min(helpers, key=lambda h: h.help_time)
