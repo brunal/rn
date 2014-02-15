@@ -122,7 +122,7 @@ class Assignator(object):
         return helpers
 
     def _on_work_time_hard(self, helpers, task):
-        helpers = filter(lambda h: h.help_time < 1.5 * self.stats.avg_help_time, helpers)
+        helpers = filter(lambda h: h.help_time < 2 * self.stats.avg_help_time, helpers)
         if not helpers:
             logging.debug("Tout le monde travaille BEAUCOUP trop pour faire '%s'!", task.nom)
         return helpers
