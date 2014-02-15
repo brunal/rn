@@ -57,12 +57,11 @@ def pp_activities(acts):
 
 def send_final_mail(subject, message):
     sent = 0
-    with mail.connect() as conn:
-        for vol in models.Volontaire.query.all():
-            msg = Message(subject, recipients=[vol.user.email])
-            msg.body = full_message.format(custom_message=message,
-                                           tasks=pp_activities(vol.activites),
-                                           url=url_for('views.activite.my_assignements', _external=True))
-            conn.send(msg)
-            sent += 1
+    for vol in models.Volontaire.query.all():
+        msg = Message(subject, recipients=[vol.user.email])
+        msg.body = full_message.format(custom_message=message,
+                                       tasks=pp_activities(vol.activites),
+                                       url=url_for('views.activite.my_assignements', _external=True))
+        mail.send(msg)
+        sent += 1
     return sent
