@@ -161,6 +161,7 @@ def upload_page(a_id):
 @requires_roles(models.Responsable)
 def delete_activite(a_id):
     activite = get_activite(a_id)
+    map(models.db.session.delete, activite.assignements)
     models.db.session.delete(activite)
     models.db.session.commit()
     flash(u'Activité supprimée')
