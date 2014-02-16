@@ -323,7 +323,6 @@ class Activite(db.Model, Evenement):
         return Assignement.query.filter_by(activite_id=self.id, source=Assignement.MANUAL)
 
     def get_available_volontaires(self):
-        # FIXME
         return sorted([v for v in Volontaire.query.all() if
                        not self.overlaps_with(v.activites, _bool=True) and
                        not any(self.conflicts(u.beginning, u.end, [self], _bool=True)
@@ -343,9 +342,6 @@ class Activite(db.Model, Evenement):
         """
         conflicts = []
         for a in activites:
-            if a is None:
-                #FIXME for real. why does check conflits send None actes?
-                continue
             if a.debut <= beginning <= a.fin or \
                beginning <= a.debut <= end:
                 if _bool:  # I just want the answer!
